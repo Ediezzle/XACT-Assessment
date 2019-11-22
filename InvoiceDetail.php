@@ -15,7 +15,7 @@
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> <b>Invoice Detail</b></h3>
             <br>
-            <div class="row">
+            <div class="row" style="text-align: center;">
                 <div class="col-lg-3"> <strong>Date</strong></div>
                 <div class="col-lg-1"> <strong>Invoice Number</strong></div>
                 <div class="col-lg-1"> <strong>Account Code</strong></div>
@@ -85,17 +85,7 @@
 
     <script src="bootstrap/js/jquery.js" type="text/javascript"></script>
     <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    <script>
-        function calcDiscount() {
-            document.getElementById("discount").innerHTML=8;
-        }
-    </script>
-    <script>
-        function refreshPage() {
-            window.location.reload();
-        }
-    </script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
    
 </body>
 

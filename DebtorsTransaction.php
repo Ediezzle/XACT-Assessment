@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initialscale=1.0">
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="xact.css" rel="stylesheet" type="text/css" />
-    <title>Stock</title>
+    <title>Debtors Transaction</title>
 </head>
 
 <body>
@@ -15,42 +15,39 @@
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Stock Details</h3>
             <br>
-            <div class="row" style="text-align:center">
-                <div class="col-lg-1"> <strong>Stock Code</strong></div>
+            <div class="row">
+                <div class="col-lg-2"> <strong>Stock Code</strong></div>
                 <div class="col-lg-2"> <strong>Date</div></strong>
-                <div class="col-lg-1"> <strong>Transaction Type</strong></div>
-                <div class="col-lg-1"> <strong>Document Number</strong></div>
-                <div class="col-lg-1"> <strong>Quantity</strong></div>
+                <div class="col-lg-2"> <strong>Transaction Type</strong></div>
+                <div class="col-lg-2"> <strong>Document Number</strong></div>
+                <div class="col-lg-2"> <strong>Quantity</strong></div>
                 <div class="col-lg-1"> <strong>Unit Cost</strong></div>
                 <div class="col-lg-1"> <strong>Unit Sell</strong></div>
-				<div class="col-lg-4"> <strong>Description</strong></div>
                 
 
             </div>
             <div class="row">
-                <div class="col-lg-1"><input type="text" name="stockCode" id="stockCode" class="form-control" required />
+                <div class="col-lg-2"><input type="text" name="stockCode" id="stockCode" class="form-control" required />
                 </div>
 				<div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required />
                 </div>
-                <div class="col-lg-1">
+                <div class="col-lg-2">
 					
-						<label for="transLab"></label>
-							<select class="form-control" id="transactionType" name="transactionType" style="margin-top: -29%;">
+						<label for="transLab" ></label>
+							<select class="form-control" id="transactionType" name="transactionType" style="margin-top: -12%;">
 								<option>Cash</option>
-								<option>Credit</option>
+								<option>Card</option>
 							</select>
 					
                 </div>
-                <div class="col-lg-1"><input type="text" name="documentNumber" id="documentNumber" class="form-control" required />
+                <div class="col-lg-2"><input type="text" name="documentNumber" id="documentNumber" class="form-control" required />
                 </div>
                 
-                <div class="col-lg-1"><input type="text" name="quantity" id="quantity" class="form-control" required />
+                <div class="col-lg-2"><input type="text" name="quantity" id="quantity" class="form-control" required />
                 </div>
                 <div class="col-lg-1"><input type="text" name="unitCost" id="unitCost" class="form-control" required />
                 </div>
                 <div class="col-lg-1"><input type="text" name="unitSell" id="unitSell" class="form-control" required />
-                </div>
-				<div class="col-lg-4"><input type="text" name="description" id="description" class="form-control" required />
                 </div>
                 
 

@@ -21,17 +21,36 @@
             $quantity = $_POST['quantity'];
             $unitCost = $_POST['unitCost'];
             $unitSell = $_POST['unitSell'];
+			$description = $_POST['description'];
 
-            $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell')";
+            $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell', '$description')";
 			$result = $conn->query($insertq);
-
+			$tpev = $quantity*$unitCost*0.85;
+			$stockOnHand=$unitCost*$quantity;
+			
+			$updateStockMaster = "INSERT INTO StockMaster (stockCode, description, cost, sellingPrice, quantityPurchased, tpev, stockOnHand) VALUES ('$stockCode', '$description', '$unitCost', '$unitSell', '$quantity', $tpev, $stockOnHand) ON DUPLICATE KEY UPDATE description='$description', cost=cost+$unitCost*$quantity, sellingPrice=sellingPrice+$unitSell*$quantity, quantityPurchased=quantityPurchased+$quantity, tpev=tpev+$tpev, stockOnHand=stockOnHand+$stockOnHand";
+			//$updateStockMaster="INSERT INTO StockMaster (stockCode, description, cost, sellingPrice, quantityPurchased) VALUES ('rj45', 'fghy', 8, 9, 10) ON DUPLICATE KEY UPDATE description='rj45' cos=8 sellingPrice=9 quantityPurchased=10";
+			$res=$conn->query($updateStockMaster);
+			if($res===TRUE)
+			{
+				echo "Updated stock master!";
+				echo "<br>";
+			}
+			
+			if($res===FALSE)
+			{
+				echo "Ooops!".$conn->error;
+				echo "<br>";
+			}
+			
             if ($result === TRUE) {
                 echo "<p>Record(s) have been saved successfully!</p>";
-
+				echo "<br>";
               } 
 			
-			else {
+			if($result===FALSE) {
                 echo "Error adding record(s)!: " . $conn->error;
+				echo "<br>";
             }
 			
             echo "<br>";
@@ -43,8 +62,9 @@
             $quantity = $_POST['quantity'];
             $unitCost = $_POST['unitCost'];
             $unitSell = $_POST['unitSell'];
+			$description = $_POST['description'];
 
-            $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell')";
+            $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell', '$description')";
 			$result = $conn->query($insertq);
 
         } elseif (isset($_POST['search'])) {
@@ -69,6 +89,7 @@
     OR quantity LIKE '%$st%'
     OR unitCost LIKE '%$st%'
     OR unitSell LIKE '%$st%'
+	OR description LIKE '%$st%'
     LIMIT 0 , 30";
                 $result = $conn->query($searchq);
 
@@ -81,6 +102,7 @@
 						<th><strong>Quantity</strong></th>
 						<th><strong>Unit Cost</strong></th>
 						<th><strong>Unit Sell</strong></th>
+						<th><strong>Description</strong></th>
 					</tr>";
 					
 			
@@ -94,6 +116,7 @@
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
                     echo "</tr>";
                 }
                 echo " </table>";
@@ -112,6 +135,7 @@
                         <th>Quantity</th>
                         <th>Unit Cost</th>
                         <th>Unit Sell</th>
+						<th>Description</th>
 						<th>Edit</th>
 						<th>Delete</th>
 					 </tr>";
@@ -127,12 +151,14 @@
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
                     echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
              		echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
 
 					
         echo "</tr>";
-   }}
+   }
+}
    echo " </table>";
  } 
 	 elseif (isset($_GET['id'])) {
@@ -149,6 +175,7 @@ $id = $_REQUEST['id'];
                         <th>Quantity</th>
                         <th>Unit Cost</th>
                         <th>Unit Sell</th>
+						<th>Description</th>
 						<th>Delete</th>
 					</tr>";
 		 		
@@ -161,6 +188,7 @@ $id = $_REQUEST['id'];
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
              		echo "<td><b><a href='Stock_Input.php?del={$row['stockCode']}'>Confirm</a></b></td>";
         			echo "</tr>";
 					
@@ -172,32 +200,14 @@ $id = $_REQUEST['id'];
 	 
 	 elseif (isset($_GET['del'])) {
                         $del = $_GET['del'];
-                        //SQL query for deletion.
-                        //$deleteq = "DELETE FROM Stock WHERE stockCode='$del'";
-                        //$result = $conn->query($deleteq);
-		 				$retrieveq = "SELECT * from Stock WHERE stockCode='$del'";
-		 
-		 				$q= $conn->query($retrieveq);
-		 foreach($q as $row)
-		 {echo $row['quantity'];print gettype($row['quantity']); $qInt=(int)$row['quantity'];}
-		 
-		 				if($qInt>0)
-						{
-						
-							$deleteItem = "UPDATE `stock` SET `quantity` = quantity-1 WHERE `stock`.`stockCode` = '$del'";
-		 				$conn->query($deleteItem);
-		 				echo "Item successfully deleted!";
-						}
-		 				
-		 				else 
-						{
+                     
 							$deleteq = "DELETE FROM Stock WHERE stockCode='$del'";
                         	$result = $conn->query($deleteq);
+		 				if($result===TRUE)
 							echo "Entire record successfully deleted!";
-						}
-		 				
-		 				
-		 				
+		 				else
+							echo "Ooops!".$conn->error;
+						
                     }
 	 	 
 	 elseif(isset($_GET['stockId']))
@@ -215,6 +225,7 @@ $id = $_REQUEST['id'];
                         <th>Quantity</th>
                         <th>Unit Cost</th>
                         <th>Unit Sell</th>
+						<th>Description</th>
 						<th>Edit</th>
 					</tr>";
 
@@ -227,6 +238,7 @@ $id = $_REQUEST['id'];
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
              		echo "<td><b><a href='Stock_Input.php?ed={$row['stockCode']}'>Confirm</a></b></td>";
         			echo "</tr>";
    }
@@ -245,38 +257,41 @@ $id = $_REQUEST['id'];
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Stock Details</h3>
             <br>
-            <div class="row">
-                <div class="col-lg-2"> <strong>Stock Code</strong></div>
+            <div class="row"  style="text-align:center">
+                <div class="col-lg-1"> <strong>Stock Code</strong></div>
                 <div class="col-lg-2"> <strong>Date</div></strong>
-                <div class="col-lg-2"> <strong>Transaction Type</strong></div>
-                <div class="col-lg-2"> <strong>Document Number</strong></div>
-                <div class="col-lg-2"> <strong>Quantity</strong></div>
+                <div class="col-lg-1"> <strong>Transaction Type</strong></div>
+                <div class="col-lg-1"> <strong>Document Number</strong></div>
+                <div class="col-lg-1"> <strong>Quantity</strong></div>
                 <div class="col-lg-1"> <strong>Unit Cost</strong></div>
                 <div class="col-lg-1"> <strong>Unit Sell</strong></div>
+				<div class="col-lg-4"> <strong>Description</strong></div>
                 
 
             </div>
             <div class="row">
-                <div class="col-lg-2"><input type="text" name="stockCode" id="stockCode" class="form-control" required value="<?php echo $row['0'];?>"/>
+                <div class="col-lg-1"><input type="text" name="stockCode" id="stockCode" class="form-control" required value="<?php echo $row['0'];?>"/>
                 </div>
                 <div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required value="<?php echo $row[1];?>"/>
                 </div>
-                <div class="col-lg-2">
+                <div class="col-lg-1">
 					
 						<label for="transLab" ></label>
 							<select class="form-control" id="transactionType" name="transactionType" value="<?php echo $row[2];?>" style="margin-top: -4%;">
 								<option>Cash</option>
-								<option>Card</option>
+								<option>Credit</option>
 							</select>
 					
                 </div>
-                <div class="col-lg-2"><input type="text" name="documentNumber" id="documentNumber" class="form-control" required value="<?php echo $row[3];?>"/>
+                <div class="col-lg-1"><input type="text" name="documentNumber" id="documentNumber" class="form-control" required value="<?php echo $row[3];?>"/>
                 </div>
-                <div class="col-lg-2"><input type="text" name="quantity" id="quantity" class="form-control" required value="<?php echo $row[4];?>"/>
+                <div class="col-lg-1"><input type="text" name="quantity" id="quantity" class="form-control" required value="<?php echo $row[4];?>"/>
                 </div>
                 <div class="col-lg-1"><input type="text" name="unitCost" id="unitCost" class="form-control" required value="<?php echo $row[5];?>"/>
                 </div>
                 <div class="col-lg-1"><input type="text" name="unitSell" id="unitSell" class="form-control" required value="<?php echo $row[6];?>"/>
+                </div>
+				<div class="col-lg-4"><input type="text" name="description" id="description" class="form-control" required value="<?php echo $row[7];?>"/>
                 </div>
                 
 
@@ -309,20 +324,7 @@ $id = $_REQUEST['id'];
         </div>
     </form>
 
-    <script src="bootstrap/js/jquery.js" type="text/javascript"></script>
-    <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    <script>
-        function displayTotal() {
-            document.getElementById("subTotal").innerHTML
-        }
-    </script>
-    <script>
-        function refreshPage() {
-            window.location.reload();
-        }
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-	 
+    	 
 	<?php 
 	
 	 }
@@ -338,17 +340,29 @@ $id = $_REQUEST['id'];
             $quantity = $_POST['quantity'];
             $unitCost = $_POST['unitCost'];
             $unitSell = $_POST['unitSell'];
+		  	$description = $_POST['description'];
 		 
-		 	$update = "UPDATE `Stock` SET `date` = '$date', transactionType='$transactionType', documentNumber='$documentNumber', quantity='$quantity', unitCost='$unitCost', unitSell='$unitSell' WHERE stockCode='$stockCode'";
+		 	$update = "UPDATE `Stock` SET `date` = '$date', transactionType='$transactionType', documentNumber='$documentNumber', quantity='$quantity', unitCost='$unitCost', unitSell='$unitSell', description='$description' WHERE stockCode='$stockCode'";
 		 	$conn->query($update);
+		  if($conn->query($update)===TRUE)
+		  {
 		 	echo "Record adited and saved successfully";
+			  echo "<br>";
+		  }
+		  else
+		  {
+			  echo "Ooops!".$conn->error;
+		  		echo "<br>";
+		  }
 		 
 	 }
 	 
 $conn->close();
  
 ?>
-
- </body>
-
- </html>
+	 
+<script src="bootstrap/js/jquery.js" type="text/javascript"></script>
+<script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</body>
+</html>

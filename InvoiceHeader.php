@@ -12,11 +12,11 @@
 <table class = 'table table-striped'>
 	<tr>
 		
-		<th>Invoice Number</th>
-		<th>Account Code</th>
-		<th>Date</th>
-		<th>Total Sell Amount</th>
-		<th>Vat</th>
+		<th><strong>Invoice Number</strong></th>
+		<th><strong>Account Code</strong></th>
+		<thstrong>Date<</thstrong>/th>
+		<th><strong>Total Sell Amount</strong></th>
+		<th><strong>Vat</strong></th>
 		<th>Cost</th>
 		
 	</tr>

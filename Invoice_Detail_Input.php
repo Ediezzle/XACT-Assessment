@@ -52,11 +52,23 @@
 
             $retrieveLastRecord = "SELECT * FROM InvoiceDetail ORDER BY invoiceNumber DESC LIMIT 1";
             $lastRecord = $conn->query($retrieveLastRecord);
+			$tsev = $quantitySold*$unitSellInt*0.85;
 			
 			
 			
-			$updateStockMaster = "UPDATE StockMaster SET quantitySold=StockMaster.quantitySold+$quantitySold where stockCode='$stockCode'"; 
+			$updateStockMaster = "UPDATE StockMaster SET quantitySold=StockMaster.quantitySold+$quantitySold, tsev=tsev+$tsev where stockCode='$stockCode'"; 
 			$res=$conn->query($updateStockMaster);
+			
+			if($res===TRUE)
+			{
+				echo "StockMaster successfully updated";
+				echo "<br>";
+		}
+			else
+			{
+				echo "Ooops! ".$conn->error;
+				echo "<br>";
+			}
 			
 			
 			foreach ($lastRecord as $row) 
@@ -73,7 +85,7 @@
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Invoice Detail</h3>
             <br>
-            <div class="row">
+            <div class="row" style="text-align: center;">
                 <div class="col-lg-2"> Date</div>
                 <div class="col-lg-1"> Invoice Number</div>
                 <div class="col-lg-1"> Account Code</div>
@@ -221,7 +233,7 @@
 				header("Location: InvoiceDetail.php");
 			}
 	 
-	 elseif (isset($_POST['nextItem'])) {
+	/* elseif (isset($_POST['nextItem'])) {
             $date = $_POST['date'];
             //$invoiceNumber = $_POST['invoiceNumber'];
             $accCode = $_POST['accCode'];
@@ -236,7 +248,9 @@
 
             $insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCost', '$unitSell', '$discount', '$subTotal')";
             $result = $conn->query($insertq);
-        } elseif (isset($_POST['search'])) {
+        } 
+		*/
+		elseif (isset($_POST['search'])) {
             ?>
          <form method='POST' action="<?php echo $_SERVER['PHP_SELF'];  ?>">
              <br />
@@ -247,7 +261,9 @@
              </div>
          </form>
          <?php
-            } elseif (isset($_POST['find'])) {
+            } 
+			
+			elseif (isset($_POST['find'])) {
                 $st = $_POST['searchTerm'];
                 $searchq = " SELECT DISTINCT * FROM InvoiceDetail
     WHERE date LIKE '%$st%' 
@@ -312,9 +328,7 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th>Sub Total</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-					</tr>";
+ 					</tr>";
 					
                 foreach ($result as $row) {
                     echo "<tr>";
@@ -329,15 +343,15 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
-                    echo "<td><b><a href='Invoice_Detail_Input.php?invoiceId={$row['invoiceNumber']}'>Edit</a></b></td>";
-             		echo "<td><b><a href='Invoice_Detail_Input.php?id={$row['invoiceNumber']}'>Delete</a></b></td>";
+                   /* echo "<td><b><a href='Invoice_Detail_Input.php?invoiceId={$row['invoiceNumber']}'>Edit</a></b></td>";
+             		echo "<td><b><a href='Invoice_Detail_Input.php?id={$row['invoiceNumber']}'>Delete</a></b></td>"; */
 
 					
         echo "</tr>";
    }
    echo " </table>";
  } 
-	 elseif (isset($_GET['id'])) {
+	/* elseif (isset($_GET['id'])) {
 $id = $_REQUEST['id'];
   $retrieveq = "SELECT * FROM InvoiceDetail WHERE invoiceNumber=$id";
  $result = $conn->query($retrieveq);
@@ -442,7 +456,7 @@ $id = $_REQUEST['id'];
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Invoice Detail</h3>
             <br>
-            <div class="row">
+            <div class="row" style="text-align: center;">
                 <div class="col-lg-2"> Date</div>
                 <div class="col-lg-1"> Invoice Number</div>
                 <div class="col-lg-1"> Account Code</div>
@@ -535,17 +549,28 @@ $id = $_REQUEST['id'];
 		 	$update = "UPDATE `InvoiceDetail` SET `accCode` = '$accCode',
 			`name` = '$name', itemNumber='$itemNumber', stockCode='$stockCode', quantitySold='$quantitySold', unitCost='$unitCost', unitSell='$unitSell', discount='$discount', subTotal='$subTotal' WHERE invoiceNumber='$invoiceNumber'";
 		 	$conn->query($update);
+		 if($conn->query($update)===TRUE)
+		 {
 		 	echo "Record adited and saved successfully";
+		 echo "<br>";
+		 }
+		 
+		 else
+		 {
+			echo "Ooops!".$conn->error; 
+		 }
+		 
 		 
 	 }
+	 */
 	 
 $conn->close();
  
 ?>
 	 
-	 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-	 <script src="bootstrap/js/jquery.js" type="text/javascript"></script>
-    <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="bootstrap/js/jquery.js" type="text/javascript"></script>
+<script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
 
  </body>
 
