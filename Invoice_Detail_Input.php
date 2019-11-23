@@ -39,7 +39,7 @@
 	
 			}
 
-			$subTotal = $quantitySold * $unitSellInt - $discount;
+			$subTotal = (int)$quantitySold * $unitSellInt - $discount;
 			
 			$insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCostInt', '$unitSellInt', '$discount', '$subTotal')";
 			$result = $conn->query($insertq);
@@ -52,7 +52,7 @@
 
             $retrieveLastRecord = "SELECT * FROM InvoiceDetail ORDER BY invoiceNumber DESC LIMIT 1";
             $lastRecord = $conn->query($retrieveLastRecord);
-			$tsev = $quantitySold*$unitSellInt*0.85;
+			$tsev = (int)$quantitySold*$unitSellInt*0.85;
 			
 			
 			

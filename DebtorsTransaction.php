@@ -11,23 +11,21 @@
 
 <body>
 
-    <form action="Stock_Input.php" method="post">
+    <form action="Debtors_Transaction_Input.php" method="post">
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Stock Details</h3>
             <br>
             <div class="row">
-                <div class="col-lg-2"> <strong>Stock Code</strong></div>
+                <div class="col-lg-2"> <strong>Account Code</strong></div>
                 <div class="col-lg-2"> <strong>Date</div></strong>
                 <div class="col-lg-2"> <strong>Transaction Type</strong></div>
                 <div class="col-lg-2"> <strong>Document Number</strong></div>
-                <div class="col-lg-2"> <strong>Quantity</strong></div>
-                <div class="col-lg-1"> <strong>Unit Cost</strong></div>
-                <div class="col-lg-1"> <strong>Unit Sell</strong></div>
+                <div class="col-lg-2"> <strong>Gross Transaction Value</strong></div>
+                <div class="col-lg-1"> <strong>VAT Value</strong></div>
                 
-
             </div>
             <div class="row">
-                <div class="col-lg-2"><input type="text" name="stockCode" id="stockCode" class="form-control" required />
+                <div class="col-lg-2"><input type="text" name="accCode" id="accCode" class="form-control" required />
                 </div>
 				<div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required />
                 </div>
@@ -43,14 +41,10 @@
                 <div class="col-lg-2"><input type="text" name="documentNumber" id="documentNumber" class="form-control" required />
                 </div>
                 
-                <div class="col-lg-2"><input type="text" name="quantity" id="quantity" class="form-control" required />
+                <div class="col-lg-2"><input type="text" name="grossTransactionValue" id="grossTransactionValue" class="form-control" required />
                 </div>
-                <div class="col-lg-1"><input type="text" name="unitCost" id="unitCost" class="form-control" required />
+                <div class="col-lg-1"><input type="text" name="vatValue" id="vatValue" class="form-control" required />
                 </div>
-                <div class="col-lg-1"><input type="text" name="unitSell" id="unitSell" class="form-control" required />
-                </div>
-                
-
             </div>
             <br/>
 

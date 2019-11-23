@@ -14,10 +14,10 @@
 		<h3 class = "pageCenter"><strong>Stock Master</strong></h3>
 	
 	<form action="Stock_Master_Input.php" method="post">
-			{
+			
 				<div class="col-lg-4"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
 				<div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
-			}
+			
 		</form>
 	
 	<form action="StockMaster.php" method="post">
