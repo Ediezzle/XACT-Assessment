@@ -82,7 +82,9 @@
              </div>
          </form>
          <?php
-            } elseif (isset($_POST['find'])) {
+            } 
+	 
+	 elseif (isset($_POST['find'])) {
                 $st = $_POST['searchTerm'];
                 $searchq = " SELECT DISTINCT * FROM Stock
     WHERE stockCode LIKE '%$st%' 
@@ -96,11 +98,11 @@
 	OR description LIKE '%$st%'
     LIMIT 0 , 30";
                 $result = $conn->query($searchq);
-
-                echo "<table class = 'table table-striped'>
+		 		echo "<form method='post' action='Stock_Input.php'>
+                 <table class = 'table table-striped'>
                     <tr>
                      	<th><strong>Stock Code</strong></th>
-						<th><strong>Date</div></strong></th>
+						<th><strong>Date</strong></th>
 						<th><strong>Transaction Type</strong></th>
 						<th><strong>Document Number</strong></th>
 						<th><strong>Quantity</strong></th>
@@ -124,8 +126,10 @@
                     echo "</tr>";
                 }
                 echo " </table>";
+		 echo "</form>";
 			
             } 
+	 
 	 
 	 elseif (isset($_POST['descending'])) {
                 $retrieveq = "SELECT * FROM Stock ORDER BY date DESC";
@@ -137,7 +141,7 @@
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th><button name='ascendingQuantity' id='ascendingQuantity'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantity'/></button>Quantity<button name='descendingQuantity' id='descendingQuantity'><img src='descending.PNG' width='10' height='15' alt='descendingQuantity'/></button></th>
                         <th>Unit Cost</th>
 						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
@@ -181,7 +185,7 @@
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th><button name='ascendingQuantity' id='ascendingQuantity'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantity'/></button>Quantity<button name='descendingQuantity' id='descendingQuantity'><img src='descending.PNG' width='10' height='15' alt='descendingQuantity'/></button></th>
                         <th>Unit Cost</th>
 						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
@@ -225,7 +229,7 @@
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th><button name='ascendingQuantity' id='ascendingQuantity'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantity'/></button>Quantity<button name='descendingQuantity' id='descendingQuantity'><img src='descending.PNG' width='10' height='15' alt='descendingQuantity'/></button></th>
                         <th>Unit Cost</th>
 						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
@@ -269,7 +273,7 @@
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th><button name='ascendingQuantity' id='ascendingQuantity'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantity'/></button>Quantity<button name='descendingQuantity' id='descendingQuantity'><img src='descending.PNG' width='10' height='15' alt='descendingQuantity'/></button></th>
                         <th>Unit Cost</th>
 						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
@@ -315,7 +319,7 @@
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th><button name='ascendingQuantity' id='ascendingQuantity'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantity'/></button>Quantity<button name='descendingQuantity' id='descendingQuantity'><img src='descending.PNG' width='10' height='15' alt='dscendingQuantity'/></button></th>
                         <th>Unit Cost</th>
 						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
@@ -360,7 +364,7 @@ $id = $_REQUEST['id'];
                         <th>Date</th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th>Quantity</th>
+                        <th>Quantity</button></th>
                         <th>Unit Cost</th>
 						<th>Total Cost</th>
                         <th>Unit Sell</th>

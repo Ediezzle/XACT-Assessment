@@ -276,8 +276,7 @@
     OR unitCost LIKE '%$st%'
     OR unitSell LIKE '%$st%'
     OR discount LIKE '%$st%'
-    OR subTotal LIKE '%$st%'
-    LIMIT 0 , 30";
+    OR subTotal LIKE '%$st%'";
                 $result = $conn->query($searchq);
 
                 echo "<table class = 'table table-striped'>
@@ -329,7 +328,7 @@
                         <th>Unit Cost</th>
                         <th>Unit Sell</th>
                         <th>Discount</th>
-                        <th>Sub Total</th>
+                        <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
  					</tr>";
 					
                 foreach ($result as $row) {
@@ -370,7 +369,7 @@
                         <th>Unit Cost</th>
                         <th>Unit Sell</th>
                         <th>Discount</th>
-                        <th>Sub Total</th>
+                        <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
  					</tr>";
 					 
 		 		if(is_array($result) || is_object($result))
@@ -413,7 +412,7 @@
                         <th>Unit Cost</th>
                         <th>Unit Sell</th>
                         <th>Discount</th>
-                        <th>Sub Total</th>
+                        <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
  					</tr>";
 
 		 		if(is_array($result) || is_object($result))
@@ -440,6 +439,92 @@
    echo " </table>";
 		 echo "</form>";
  } 
+	 
+	 elseif (isset($_POST['ascendingSubTotal'])) {
+                $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY subTotal ASC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Invoice_Detail_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                    <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>Invoice Number</th>
+                        <th>Account Code</th>
+                        <th>Name & Surname</th>
+                        <th>Item Number</th>
+                        <th>Stock Code</th>
+                        <th>Quantity Sold</th>
+                        <th>Unit Cost</th>
+                        <th>Unit Sell</th>
+                        <th>Discount</th>
+                        <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+ 					</tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                    echo "<tr>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['invoiceNumber'] . "</td>";
+                    echo "<td>" . $row['accCode'] . "</td>";
+                    echo "<td>" . $row['name'] . "</td>";
+                    echo "<td>" . $row['itemNumber'] . "</td>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['quantitySold'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+                    echo "<td>" . $row['discount'] . "</td>";
+                    echo "<td>" . $row['subTotal'] . "</td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
+	 
+	 elseif (isset($_POST['descendingSubTotal'])) {
+                $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY subTotal DESC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Invoice_Detail_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                    <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>Invoice Number</th>
+                        <th>Account Code</th>
+                        <th>Name & Surname</th>
+                        <th>Item Number</th>
+                        <th>Stock Code</th>
+                        <th>Quantity Sold</th>
+                        <th>Unit Cost</th>
+                        <th>Unit Sell</th>
+                        <th>Discount</th>
+                        <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+ 					</tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                    echo "<tr>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['invoiceNumber'] . "</td>";
+                    echo "<td>" . $row['accCode'] . "</td>";
+                    echo "<td>" . $row['name'] . "</td>";
+                    echo "<td>" . $row['itemNumber'] . "</td>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['quantitySold'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+                    echo "<td>" . $row['discount'] . "</td>";
+                    echo "<td>" . $row['subTotal'] . "</td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
 	 
 	 elseif (isset($_GET['id'])) {
 $id = $_REQUEST['id'];
