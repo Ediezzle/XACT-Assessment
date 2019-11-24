@@ -312,12 +312,14 @@
                     echo "</tr>";
                 }
                 echo " </table>";
+				
             } elseif (isset($_POST['open'])) {
                 $retrieveq = "SELECT * FROM InvoiceDetail";
                 $result = $conn->query($retrieveq);
+				echo "<form method='post' action=Invoice_Detail_Input.php>";
                 echo "<table class = 'table table-striped'>
                     <tr>
-                        <th>Date</th>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
                         <th>Account Code</th>
                         <th>Name & Surname</th>
@@ -350,8 +352,96 @@
         echo "</tr>";
    }
    echo " </table>";
+				echo "</form>";
  } 
-	/* elseif (isset($_GET['id'])) {
+	 
+	 elseif (isset($_POST['descending'])) {
+                $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY date DESC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action=Invoice_detail_Input.php>";
+                echo "<table class = 'table table-striped'>
+                    <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>Invoice Number</th>
+                        <th>Account Code</th>
+                        <th>Name & Surname</th>
+                        <th>Item Number</th>
+                        <th>Stock Code</th>
+                        <th>Quantity Sold</th>
+                        <th>Unit Cost</th>
+                        <th>Unit Sell</th>
+                        <th>Discount</th>
+                        <th>Sub Total</th>
+ 					</tr>";
+					 
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                    echo "<tr>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['invoiceNumber'] . "</td>";
+                    echo "<td>" . $row['accCode'] . "</td>";
+                    echo "<td>" . $row['name'] . "</td>";
+                    echo "<td>" . $row['itemNumber'] . "</td>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['quantitySold'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+                    echo "<td>" . $row['discount'] . "</td>";
+                    echo "<td>" . $row['subTotal'] . "</td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
+	 
+	 elseif (isset($_POST['ascending'])) {
+                $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY date ASC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Invoice_Detail_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                    <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>Invoice Number</th>
+                        <th>Account Code</th>
+                        <th>Name & Surname</th>
+                        <th>Item Number</th>
+                        <th>Stock Code</th>
+                        <th>Quantity Sold</th>
+                        <th>Unit Cost</th>
+                        <th>Unit Sell</th>
+                        <th>Discount</th>
+                        <th>Sub Total</th>
+ 					</tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                    echo "<tr>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['invoiceNumber'] . "</td>";
+                    echo "<td>" . $row['accCode'] . "</td>";
+                    echo "<td>" . $row['name'] . "</td>";
+                    echo "<td>" . $row['itemNumber'] . "</td>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['quantitySold'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+                    echo "<td>" . $row['discount'] . "</td>";
+                    echo "<td>" . $row['subTotal'] . "</td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ } 
+	 
+	 elseif (isset($_GET['id'])) {
 $id = $_REQUEST['id'];
   $retrieveq = "SELECT * FROM InvoiceDetail WHERE invoiceNumber=$id";
  $result = $conn->query($retrieveq);
@@ -562,7 +652,7 @@ $id = $_REQUEST['id'];
 		 
 		 
 	 }
-	 */
+	 
 	 
 $conn->close();
  
