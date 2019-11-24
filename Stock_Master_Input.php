@@ -43,7 +43,7 @@
 
                     echo "<tr>";
                     echo "<tr>";
-					echo "<td>" . $row['stockCode'] . "</td>";
+					echo "<td align='center'>" . $row['stockCode'] . "</td>";
 					echo "<td>" . $row['description'] . "</td>";
 					echo "<td>" . $row['cost'] . "</td>";
 					echo "<td>" . $row['sellingPrice'] . "</td>";

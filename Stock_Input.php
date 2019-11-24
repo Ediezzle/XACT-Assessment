@@ -54,7 +54,9 @@
             }
 			
             echo "<br>";
-        } elseif (isset($_POST['nextItem'])) {
+        } 
+	 /*
+	 elseif (isset($_POST['nextItem'])) {
             $stockCode = $_POST['stockCode'];
             $date = $_POST['date'];
             $transactionType = $_POST['transactionType'];
@@ -67,7 +69,9 @@
             $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell', '$description')";
 			$result = $conn->query($insertq);
 
-        } elseif (isset($_POST['search'])) {
+        }
+	 */ 
+	 elseif (isset($_POST['search'])) {
             ?>
          <form method='POST' action="<?php echo $_SERVER['PHP_SELF'];  ?>">
              <br />
@@ -123,17 +127,19 @@
 			
             } 
 	 
-	 elseif (isset($_POST['open'])) {
-                $retrieveq = "SELECT * FROM Stock";
+	 elseif (isset($_POST['descending'])) {
+                $retrieveq = "SELECT * FROM Stock ORDER BY date DESC";
                 $result = $conn->query($retrieveq);
+		 echo "<form method='post' action=Stock_Input.php>";
                 echo "<table class = 'table table-striped'>
-                    <tr>
+                    <tr align='center'>
                         <th>stockCode</th>
-                        <th>Date</th>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>TransactionType</th>
                         <th>DocumentNumber</th>
-                        <th>Quantity</th>
+                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
                         <th>Unit Cost</th>
+						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
 						<th>Description</th>
 						<th>Edit</th>
@@ -143,13 +149,15 @@
 		 		if(is_array($result) || is_object($result))
 				{
                 foreach ($result as $row) {
-                    echo "<tr>";
+					$totalCost = $row['quantity'] * $row['unitCost'];
+                    echo "<tr align='center'>";
                     echo "<td>" . $row['stockCode'] . "</td>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['documentNumber'] . "</td>";
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
 					echo "<td>" . $row['description'] . "</td>";
                     echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
@@ -160,7 +168,187 @@
    }
 }
    echo " </table>";
+		 echo "</form>";
  } 
+	 
+	 elseif (isset($_POST['descendingQuantity'])) {
+                $retrieveq = "SELECT * FROM Stock ORDER BY quantity DESC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action=Stock_Input.php>";
+                echo "<table class = 'table table-striped'>
+                    <tr align='center'>
+                        <th>stockCode</th>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>TransactionType</th>
+                        <th>DocumentNumber</th>
+                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th>Unit Cost</th>
+						<th>Total Cost Cost</th>
+                        <th>Unit Sell</th>
+						<th>Description</th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					$totalCost = $row['quantity'] * $row['unitCost'];
+                    echo "<tr align='center'>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['transactionType'] . "</td>";
+                    echo "<td>" . $row['documentNumber'] . "</td>";
+                    echo "<td>" . $row['quantity'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
+                    echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
+             		echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
+	 
+	 elseif (isset($_POST['ascending'])) {
+                $retrieveq = "SELECT * FROM Stock ORDER BY date ASC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Stock_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                    <tr align='center'>
+                        <th>stockCode</th>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>TransactionType</th>
+                        <th>DocumentNumber</th>
+                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th>Unit Cost</th>
+						<th>Total Cost Cost</th>
+                        <th>Unit Sell</th>
+						<th>Description</th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					$totalCost = $row['quantity'] * $row['unitCost'];
+                    echo "<tr align='center'>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['transactionType'] . "</td>";
+                    echo "<td>" . $row['documentNumber'] . "</td>";
+                    echo "<td>" . $row['quantity'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
+                    echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
+             		echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ } 
+	 
+	 elseif (isset($_POST['ascendingQuantity'])) {
+                $retrieveq = "SELECT * FROM Stock ORDER BY quantity ASC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Stock_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                    <tr align='center'>
+                        <th>stockCode</th>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>TransactionType</th>
+                        <th>DocumentNumber</th>
+                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th>Unit Cost</th>
+						<th>Total Cost Cost</th>
+                        <th>Unit Sell</th>
+						<th>Description</th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					$totalCost = $row['quantity'] * $row['unitCost'];
+                    echo "<tr align='center'>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['transactionType'] . "</td>";
+                    echo "<td>" . $row['documentNumber'] . "</td>";
+                    echo "<td>" . $row['quantity'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
+                    echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
+             		echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ } 
+	 
+	  elseif (isset($_POST['open'])) {
+                $retrieveq = "SELECT * FROM Stock";
+                $result = $conn->query($retrieveq);
+		 
+		  echo "<form method='post' action='Stock_Input.php'>
+			 
+                <table class = 'table table-striped'>
+                    <tr align='center'>
+                        <th>stockCode</th>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th>TransactionType</th>
+                        <th>DocumentNumber</th>
+                        <th><button name='ascendingQuantity' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Quantity<button name='descendingQuantity' id='descending'><img src='descending.PNG' width='10' height='15' alt='ascending'/></button></th>
+                        <th>Unit Cost</th>
+						<th>Total Cost Cost</th>
+                        <th>Unit Sell</th>
+						<th>Description</th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					$totalCost = $row['quantity'] * $row['unitCost'];
+                    echo "<tr align='center'>";
+                    echo "<td>" . $row['stockCode'] . "</td>";
+                    echo "<td>" . $row['date'] . "</td>";
+                    echo "<td>" . $row['transactionType'] . "</td>";
+                    echo "<td>" . $row['documentNumber'] . "</td>";
+                    echo "<td>" . $row['quantity'] . "</td>";
+                    echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
+                    echo "<td>" . $row['unitSell'] . "</td>";
+					echo "<td>" . $row['description'] . "</td>";
+                    echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
+             		echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
+
+					
+        echo "</tr>";
+   }
+}
+   echo " </table>";
+		  echo "</form>";
+ } 
+	 
 	 elseif (isset($_GET['id'])) {
 $id = $_REQUEST['id'];
   $retrieveq = "SELECT * FROM Stock WHERE stockCode='$id'";
@@ -174,12 +362,14 @@ $id = $_REQUEST['id'];
                         <th>DocumentNumber</th>
                         <th>Quantity</th>
                         <th>Unit Cost</th>
+						<th>Total Cost</th>
                         <th>Unit Sell</th>
 						<th>Description</th>
 						<th>Delete</th>
 					</tr>";
 		 		
                 foreach ($result as $row) {
+					$totalCost = $row['quantity'] * $row['unitCost'];
                     echo "<tr>";
                     echo "<td>" . $row['stockCode'] . "</td>";
                     echo "<td>" . $row['date'] . "</td>";
@@ -187,6 +377,7 @@ $id = $_REQUEST['id'];
                     echo "<td>" . $row['documentNumber'] . "</td>";
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
 					echo "<td>" . $row['description'] . "</td>";
              		echo "<td><b><a href='Stock_Input.php?del={$row['stockCode']}'>Confirm</a></b></td>";
@@ -224,12 +415,14 @@ $id = $_REQUEST['id'];
                         <th>DocumentNumber</th>
                         <th>Quantity</th>
                         <th>Unit Cost</th>
+						<th>Total Cost</th>
                         <th>Unit Sell</th>
 						<th>Description</th>
 						<th>Edit</th>
 					</tr>";
 
                 foreach ($result as $row) {
+					$totalCost = $row['quantity'] * $row['unitCost'];
                     echo "<tr>";
                     echo "<td>" . $row['stockCode'] . "</td>";
                     echo "<td>" . $row['date'] . "</td>";
@@ -237,6 +430,7 @@ $id = $_REQUEST['id'];
                     echo "<td>" . $row['documentNumber'] . "</td>";
                     echo "<td>" . $row['quantity'] . "</td>";
                     echo "<td>" . $row['unitCost'] . "</td>";
+					echo "<td>" . $totalCost . "</td>";
                     echo "<td>" . $row['unitSell'] . "</td>";
 					echo "<td>" . $row['description'] . "</td>";
              		echo "<td><b><a href='Stock_Input.php?ed={$row['stockCode']}'>Confirm</a></b></td>";
@@ -253,7 +447,9 @@ $id = $_REQUEST['id'];
  		 $result = $conn->query($retrieveq);
 		 //$row = (array)$result;
 	$row = $result->fetch_array();
-		?> <form action="Stock_Input.php" method="post">
+		?>
+          
+         <form action="Stock_Input.php" method="post">
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Stock Details</h3>
             <br>
@@ -264,8 +460,9 @@ $id = $_REQUEST['id'];
                 <div class="col-lg-1"> <strong>Document Number</strong></div>
                 <div class="col-lg-1"> <strong>Quantity</strong></div>
                 <div class="col-lg-1"> <strong>Unit Cost</strong></div>
+				<div class="col-lg-1"> <strong>Total Cost</strong></div>
                 <div class="col-lg-1"> <strong>Unit Sell</strong></div>
-				<div class="col-lg-4"> <strong>Description</strong></div>
+				<div class="col-lg-3"> <strong>Description</strong></div>
                 
 
             </div>
@@ -289,9 +486,11 @@ $id = $_REQUEST['id'];
                 </div>
                 <div class="col-lg-1"><input type="text" name="unitCost" id="unitCost" class="form-control" required value="<?php echo $row[5];?>"/>
                 </div>
+				<div class="col-lg-1"><input type="text" name="totalCost" id="totalCost" class="form-control" disabled value="<?php echo $row[4]*$row[5];?>"/>
+                </div>
                 <div class="col-lg-1"><input type="text" name="unitSell" id="unitSell" class="form-control" required value="<?php echo $row[6];?>"/>
                 </div>
-				<div class="col-lg-4"><input type="text" name="description" id="description" class="form-control" required value="<?php echo $row[7];?>"/>
+				<div class="col-lg-3"><input type="text" name="description" id="description" class="form-control" required value="<?php echo $row[7];?>"/>
                 </div>
                 
 
