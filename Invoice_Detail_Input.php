@@ -682,7 +682,7 @@ $id = $_REQUEST['id'];
                 </div>
 
             </div>
-            <br />
+            <br/>
         </div>
     </form>
     <br>
