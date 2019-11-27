@@ -66,13 +66,15 @@
             <br />
 
             <div class="row">
-                <div class="col-lg-3">
-                    <a href="InvoiceDetail.php"> <button class="btn btn-info btn-sm formcontrol" id="nextItem" name="nextItem">Next Item </button></a>
+                <div class="col-lg-5">
+                   
                 </div>
-                <div class=" col-lg-3">
+                <div class=" col-lg-32">
                     <button class="btn btn-info btn-sm form-control" id="save" name="save">Save</button>
                 </div>
-
+			<div class="col-lg-5">
+                   
+             </div>
             </div>
             <br />
         </div>

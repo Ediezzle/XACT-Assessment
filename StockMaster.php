@@ -39,15 +39,7 @@
 		$retrieveResult = $conn->query($retrieveAll);
 		foreach($retrieveResult as $row)
 		{
-			/*$quantityPurchased = $row['quantityPurchased'];
-			$quantityPurchasedInt = (int)$quantityPurchased; //echo $quantityPurchasedInt; 
-			echo "<br>";
-			$cost = $row['cost'];
-			$costInt = (int)$cost; //echo $costInt;
-			$purchases = $costInt*$quantityPurchasedInt;
-			//echo "<br>";
-			$tpev = $purchases*0.85;
-			echo $purchases;*/
+
 		}
 		
                 echo "<table class = 'table table-striped'>

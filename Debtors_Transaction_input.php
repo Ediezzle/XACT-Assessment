@@ -194,6 +194,8 @@
  }
 	
 	
+	
+	
 	//checking whcich button has been clicked and directing to the respective locations
 	elseif(isset($_POST['stock']))
 			{

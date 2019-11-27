@@ -58,11 +58,14 @@
             <br/>
 
             <div class="row">
-                <div class="col-lg-3">
+				<div class=" col-lg-5">
+
+                </div>
+                <div class="col-lg-2">
                     <a href="InvoiceDetail.php"> <button class="btn btn-info btn-sm formcontrol" id="save" name="save">Save </button></a>
                 </div>
-                <div class=" col-lg-3">
-                    <button class="btn btn-info btn-sm form-control" id="nextItem" name="nextItem" style="text-align: right;">Next Item</button>
+                <div class=" col-lg-5">
+
                 </div>
 
             </div>

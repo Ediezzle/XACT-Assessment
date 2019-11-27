@@ -470,7 +470,7 @@ $id = $_REQUEST['id'];
 
             </div>
             <div class="row">
-                <div class="col-lg-1"><input type="text" name="stockCode" id="stockCode" class="form-control" required value="<?php echo $row['0'];?>"/>
+                <div class="col-lg-1"><input type="text" name="stockCode" id="stockCode" class="form-control" readonly value="<?php echo $row['0'];?>"/>
                 </div>
                 <div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required value="<?php echo $row[1];?>"/>
                 </div>
@@ -515,14 +515,11 @@ $id = $_REQUEST['id'];
     <br>
     <br>
     <form action="Stock_Input.php" method="post">
-        <div class="row">
-            <div class="col-lg-4">
-                <button class="btn btn-info btn-sm form-control" id="search" name="search" style="border-radius: 10px;">Search</button>
-            </div>
-            <div class="col-lg-4">
-                <button class="btn btn-info btn-sm form-control" id="open" name="open" style="border-radius: 10px;">Open</button>
-
-            </div>
+        <div class="row container">
+                 <div class="col-lg-2"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
+                 <div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
+             </div>
+            
         </div>
     </form>
 
