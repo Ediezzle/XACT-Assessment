@@ -11,7 +11,7 @@
  <body>
 
      <?php
-
+        //including the file in which i establiched a connection with the database
         include_once 'connections.php';
 
         //checking if save button has been clicked
@@ -32,8 +32,8 @@
 
             //casting some retrieved string values to doubles
             foreach ($res as $rows) {
-                $unitCostDouble = (double) $rows['unitCost'];
-                $unitSellDouble = (double) $rows['unitSell'];
+                $unitCostDouble = (float) $rows['unitCost'];
+                $unitSellDouble = (float) $rows['unitSell'];
             }
 
             $subTotal = (int) $quantitySold * $unitSellDouble - $discount;
@@ -41,8 +41,8 @@
             //capturing values into the database
             $insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal, transactionType) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCostDouble', '$unitSellDouble', '$discount', '$subTotal', '$transactionType')";
             $result = $conn->query($insertq);
-			
-			
+
+
             //fetching credit sales transactions
             $retrieveq = "SELECT * FROM InvoiceDetail WHERE transactionType='Credit'";
             $retResult = $conn->query($retrieveq);
@@ -56,12 +56,10 @@
                 $in = $retRow['invoiceNumber'];
                 $gtv = $retRow['subTotal'];
                 $vv = 0.15 * $gtv;
-				$quantitySoldCredit = $retRow['quantitySold'];
-				$unitCostCredit = $retRow['unitCost'];
-				$unitSellCredit = $retRow['unitSell'];
-				$tT = $retRow['transactionType'];
-				
-				
+                $quantitySoldCredit = $retRow['quantitySold'];
+                $unitCostCredit = $retRow['unitCost'];
+                $unitSellCredit = $retRow['unitSell'];
+                $tT = $retRow['transactionType'];
             }
 
             //Creating entries into the DebtorsTransaction table whenever a credit sale occurs			
@@ -87,10 +85,10 @@
                 echo "Transaction recorded in Debtors Transaction File";
                 echo "<br>";
             }
-			
-			if(isset($_POST['credit']) && !$insertDebtorsTransactionResult === TRUE)
-				echo "Ooops".$conn->error;
-    
+
+            if (isset($_POST['credit']) && !$insertDebtorsTransactionResult === TRUE)
+                echo "Ooops" . $conn->error;
+
             if ($res === TRUE) {
                 echo "StockMaster successfully updated";
                 echo "<br>";
@@ -104,36 +102,33 @@
                 $invoiceNumber = $row['invoiceNumber'];
                 $unCost = $row['unitCost'];
                 $unSell = $row['unitSell'];
-				$transType = $row['transactionType'];
+                $transType = $row['transactionType'];
             }
-			
-			$fetchq = "SELECT * FROM DebtorsMaster";
-			$fetchRes = $conn->query($fetchq);
-			foreach($fetchRes as $fetchedRow)
-			{
-				$costYearToDate = $quantitySoldCredit*$unitCostCredit;
-				$salesYearToDate = $quantitySoldCredit*$unitSellCredit;
-				$paid = $fetchedRow['paid'];
-				$balance = $fetchedRow['salesYearToDate']-$paid;
-			}
-			
-			
-			if($tT='credit'){
-			$updateDebtorsMaster = "INSERT INTO DebtorsMaster (accCode, name, costYearToDate, salesYearToDate, paid, balance) VALUES ('$ac', '$nm', '$costYearToDate', '$salesYearToDate', '$paid', '$balance') ON DUPLICATE KEY UPDATE name='$nm', costYearToDate=costYearToDate+'$costYearToDate', salesYearToDate=salesYearToDate+'$salesYearToDate', paid='$paid', balance=salesYearToDate-'$paid'";
-			$updateResult=$conn->query($updateDebtorsMaster);
-			}
-			
-			if($updateResult===TRUE)
-			{
-				echo "Debtors Master successfully updated";
-				echo "<br>";
-				}
-			
-			if($transType='credit' && !$updateResult===TRUE)
-			{
-				echo "Ooops!".$conn->error;
-				echo "<br>";
-				}
+
+            $fetchq = "SELECT * FROM DebtorsMaster";
+            $fetchRes = $conn->query($fetchq);
+            foreach ($fetchRes as $fetchedRow) {
+                $costYearToDate = $quantitySoldCredit * $unitCostCredit;
+                $salesYearToDate = $quantitySoldCredit * $unitSellCredit;
+                $paid = $fetchedRow['paid'];
+                $balance = $fetchedRow['salesYearToDate'] - $paid;
+            }
+
+
+            if ($tT = 'credit') {
+                $updateDebtorsMaster = "INSERT INTO DebtorsMaster (accCode, name, costYearToDate, salesYearToDate, paid, balance) VALUES ('$ac', '$nm', '$costYearToDate', '$salesYearToDate', '$paid', '$balance') ON DUPLICATE KEY UPDATE name='$nm', costYearToDate=costYearToDate+'$costYearToDate', salesYearToDate=salesYearToDate+'$salesYearToDate', paid='$paid', balance=salesYearToDate-'$paid'";
+                $updateResult = $conn->query($updateDebtorsMaster);
+            }
+
+            if ($updateResult === TRUE) {
+                echo "Debtors Master successfully updated";
+                echo "<br>";
+            }
+
+            if ($transType = 'credit' && !$updateResult === TRUE) {
+                echo "Ooops!" . $conn->error;
+                echo "<br>";
+            }
 
             if ($result === TRUE) {
                 //displaying the successfully saved record
@@ -207,19 +202,6 @@
              </form>
              <br>
              <br>
-             <form action="Invoice_Detail_Input.php" method="post">
-                 <div class="row">
-                     <div class="col-lg-2">
-                         <button class="btn btn-info btn-sm form-control" id="search" name="search">Search</button>
-                     </div>
-                     <div class="col-lg-3">
-                         <button class="btn btn-info btn-sm form-control" id="open" name="open">Open</button>
-                     </div>
-                     <div class="col-lg-3">
-                         <button class="btn btn-info btn-sm form-control" id="delete" name="delete">Delete</button>
-                     </div>
-                 </div>
-             </form>
 
          <?php
                 } else {
@@ -239,25 +221,6 @@
             } elseif (isset($_POST['debtorsMaster'])) {
                 header("Location: DebtorsMaster.php");
             }
-
-
-            /* elseif (isset($_POST['nextItem'])) {
-            $date = $_POST['date'];
-            //$invoiceNumber = $_POST['invoiceNumber'];
-            $accCode = $_POST['accCode'];
-            $name = $_POST['name'];
-            $itemNumber = $_POST['itemNumber'];
-            $stockCode = $_POST['stockCode'];
-            $quantitySold = $_POST['quantitySold'];
-            $unitCost = $_POST['unitCost'];
-            $unitSell = $_POST['unitSell'];
-            $discount = $_POST['discount'];
-            $subTotal = $quantitySold * $unitSell - $discount;
-
-            $insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCost', '$unitSell', '$discount', '$subTotal')";
-            $result = $conn->query($insertq);
-        } 
-		*/
 
             //checking if search has been clicked and implementing the search algorithm
             elseif (isset($_POST['search'])) {
@@ -367,6 +330,54 @@
             }
             echo " </table>";
             echo "</form>";
+            echo "<h4><strong>TOTALS</strong><h4>";
+            echo "<table class = 'table table-striped'>
+                    <tr>
+                        <th>Quantity Sold</th>
+                        <th>Unit Cost</th>
+                        <th>Unit Sell</th>
+                        <th>Discount</th>
+                        <th>Grand Total</th>
+ 					</tr>";
+
+            $fetchQuantitySoldTotal = "SELECT SUM(quantitySold) qs FROM InvoiceDetail ";
+            $executeFetchQuantitySoldTotal = $conn->query($fetchQuantitySoldTotal);
+            foreach ($executeFetchQuantitySoldTotal as $r) {
+                $stringQuantitySoldTotal = $r['qs'];
+            }
+
+            $fetchSubTotalSum = "SELECT SUM(subTotal) sbt FROM InvoiceDetail ";
+            $executeFetchSubTotalSum = $conn->query($fetchSubTotalSum);
+            foreach ($executeFetchSubTotalSum as $subRow) {
+                $stringSubTotalSum = $subRow['sbt'];
+            }
+
+            $fetchUnitCostTotal = "SELECT SUM(unitCost) uct FROM InvoiceDetail ";
+            $executeFetchUnitCostTotal = $conn->query($fetchUnitCostTotal);
+            foreach ($executeFetchUnitCostTotal  as $unitCostTotalRow) {
+                $stringUnitCostTotal = $unitCostTotalRow['uct'];
+            }
+
+            $fetchUnitSellTotal = "SELECT SUM(unitSell) usl FROM InvoiceDetail ";
+            $executeFetchUnitSellTotal = $conn->query($fetchUnitSellTotal);
+            foreach ($executeFetchUnitSellTotal  as $unitSellTotalRow) {
+                $stringUnitSellTotal = $unitSellTotalRow['usl'];
+            }
+
+            $fetchDiscountTotal = "SELECT SUM(discount) d FROM InvoiceDetail ";
+            $executeFetchDiscountTotal = $conn->query($fetchDiscountTotal);
+            foreach ($executeFetchDiscountTotal  as $discountTotalRow) {
+                $stringDiscountTotal = $discountTotalRow['d'];
+            }
+
+            echo "<tr>";
+            echo "<td>" . $stringQuantitySoldTotal . "</td>";
+            echo "<td>" .  $stringUnitCostTotal . "</td>";
+            echo "<td>" .  $stringUnitSellTotal . "</td>";
+            echo "<td>" . $stringDiscountTotal . "</td>";
+            echo "<td>" . $stringSubTotalSum . "</td>";
+            echo "</tr>";
+            echo " </table>";
         }
         //sorting by date in descending order
         elseif (isset($_POST['descending'])) {

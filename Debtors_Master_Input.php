@@ -24,7 +24,7 @@ $id = $_REQUEST['id'];
                         <th>Name</th>
                         <th name='address1'>Address 1</th>
                         <th>Address 2</th>
-                        <th>Address3</th>
+                        <th>Address 3</th>
                         <th>Cost Year To Date</th>
 						<th>Sales Year To Date</th>
                         <th>Paid</th>
@@ -49,8 +49,7 @@ $id = $_REQUEST['id'];
         			echo "</tr>";
 					
 					
-   }
-		 
+   }	 
    echo " </table>";
  }
 	 
@@ -78,7 +77,7 @@ $id = $_REQUEST['id'];
                         <th>Name</th>
                         <th name='address1'>Address 1</th>
                         <th>Address 2</th>
-                        <th>Address3</th>
+                        <th>Address 3</th>
                         <th>Cost Year To Date</th>
 						<th>Sales Year To Date</th>
                         <th>Paid</th>
@@ -210,7 +209,7 @@ $id = $_REQUEST['id'];
             $salesYearToDate = $_POST['salesYearToDate'];
 		  	$paid = $_POST['paid'];
 		 
-		 	$update = "UPDATE `DebtorsMaster` SET `accCode` = '$accCode', name='$name', address1='$address1', address2='$address2', address3='$address3', costYearToDate='$costYearToDate', balance='$salesYearToDate'-'$paid' WHERE accCode='$accCode'";
+		 	$update = "UPDATE `DebtorsMaster` SET `accCode` = '$accCode', name='$name', address1='$address1', address2='$address2', address3='$address3', costYearToDate='$costYearToDate', paid = $paid, balance='$salesYearToDate'-'$paid' WHERE accCode='$accCode'";
 		 	$conn->query($update);
 		  if($conn->query($update)===TRUE)
 		  {
@@ -257,7 +256,7 @@ $id = $_REQUEST['id'];
                         <th>Name</th>
                         <th name='address1'>Address 1</th>
                         <th>Address 2</th>
-                        <th>Address3</th>
+                        <th>Address 3</th>
                         <th>Cost Year To Date</th>
 						<th>Sales Year To Date</th>
                         <th>Paid</th>
@@ -266,7 +265,7 @@ $id = $_REQUEST['id'];
             foreach ($result  as $row) {
 
                 $balance = $row['salesYearToDate']-$row['paid'];
-                    echo "<tr>";
+                echo "<tr>";
 					echo "<td>" . $row['accCode'] . "</td>";
 					echo "<td>" . $row['name'] . "</td>";
 					echo "<td>" . $row['address1'] . "</td>";
@@ -276,12 +275,185 @@ $id = $_REQUEST['id'];
 					echo "<td>" . $row['salesYearToDate']. "</td>";
 					echo "<td>" . $row['paid']. "</td>";
 					echo "<td>" . $row['balance']. "</td>";
-        			echo "</tr>";
+        		echo "</tr>";
             }
             echo " </table>";
 
             //opening all records if open button has been clicked
         }
+	
+	elseif (isset($_POST['descendingSYTD'])) {
+                $retrieveq = "SELECT * FROM DebtorsMaster ORDER BY salesYearToDate DESC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action=Debtors_Master_Input.php>";
+                echo "<table class = 'table table-striped'>
+                    <tr>
+                        <th>Account Code</th>
+                        <th>Name</th>
+                        <th name='address1'>Address 1</th>
+                        <th>Address 2</th>
+                        <th>Address 3</th>
+                        <th>Cost Year To Date</th>
+						<th><button name='ascendingSYTD' id='ascendingSYTD'><img src='ascending.PNG' width='10' height='15' alt='ascendingSYTD'/></button>Sales Year To Date<button name='descendingSYTD' id='descendingSYTD'><img src='descending.PNG' width='10' height='15' alt='descendingSYTD'/></button></th>
+                        <th>Paid</th>
+						<th><button name='ascendingBal' id='ascendingBal'><img src='ascending.PNG' width='10' height='15' alt='ascendingBal'/></button>Balance<button name='descendingBal' id='descendingBal'><img src='descending.PNG' width='10' height='15' alt='descendingBal'/></button></th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+					 
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                    $balance = $row['costYearToDate']-$row['paid'];
+				echo "<tr>";
+					echo "<td>" . $row['accCode'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['address1'] . "</td>";
+					echo "<td>" . $row['address2']. "</td>";
+					echo "<td>" . $row['address3'] . "</td>";
+					echo "<td>" . $row['costYearToDate'] . "</td>";
+					echo "<td>" . $row['salesYearToDate']. "</td>";
+					echo "<td>" . $row['paid']. "</td>";
+					echo "<td>" . $row['balance']. "</td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?accCode={$row['accCode']}'>Edit</a></b></td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?id={$row['accCode']}'>Delete</a></b></td>";
+				echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
+	 
+	 elseif (isset($_POST['ascendingSYTD'])) {
+                $retrieveq = "SELECT * FROM DebtorsMaster ORDER BY salesYearToDate ASC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Debtors_Master_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                     <tr>
+                        <th>Account Code</th>
+                        <th>Name</th>
+                        <th name='address1'>Address 1</th>
+                        <th>Address 2</th>
+                        <th>Address 3</th>
+                        <th>Cost Year To Date</th>
+						<th><button name='ascendingSYTD' id='ascendingSYTD'><img src='ascending.PNG' width='10' height='15' alt='ascendingSYTD'/></button>Sales Year To Date<button name='descendingSYTD' id='descendingSYTD'><img src='descending.PNG' width='10' height='15' alt='descendingSYTD'/></button></th>
+                        <th>Paid</th>
+						<th><button name='ascendingBal' id='ascendingBal'><img src='ascending.PNG' width='10' height='15' alt='ascendingBal'/></button>Balance<button name='descendingBal' id='descendingBal'><img src='descending.PNG' width='10' height='15' alt='descendingBal'/></button></th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                   $balance = $row['costYearToDate']-$row['paid'];
+				echo "<tr>";
+					echo "<td>" . $row['accCode'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['address1'] . "</td>";
+					echo "<td>" . $row['address2']. "</td>";
+					echo "<td>" . $row['address3'] . "</td>";
+					echo "<td>" . $row['costYearToDate'] . "</td>";
+					echo "<td>" . $row['salesYearToDate']. "</td>";
+					echo "<td>" . $row['paid']. "</td>";
+					echo "<td>" . $row['balance']. "</td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?accCode={$row['accCode']}'>Edit</a></b></td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?id={$row['accCode']}'>Delete</a></b></td>";
+				echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ } 
+	 
+	 elseif (isset($_POST['ascendingBal'])) {
+                $retrieveq = "SELECT * FROM DebtorsMaster ORDER BY balance ASC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action='Stock_Master_Input.php'>";
+                echo "<table class = 'table table-striped'>
+                   <tr>
+                        <th>Account Code</th>
+                        <th>Name</th>
+                        <th name='address1'>Address 1</th>
+                        <th>Address 2</th>
+                        <th>Address 3</th>
+                        <th>Cost Year To Date</th>
+						<th><button name='ascendingSYTD' id='ascendingSYTD'><img src='ascending.PNG' width='10' height='15' alt='ascendingSYTD'/></button>Sales Year To Date<button name='descendingSYTD' id='descendingSYTD'><img src='descending.PNG' width='10' height='15' alt='descendingSYTD'/></button></th>
+                        <th>Paid</th>
+						<th><button name='ascendingBal' id='ascendingBal'><img src='ascending.PNG' width='10' height='15' alt='ascendingBal'/></button>Balance<button name='descendingBal' id='descendingBal'><img src='descending.PNG' width='10' height='15' alt='descendingBal'/></button></th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                  	$balance = $row['costYearToDate']-$row['paid'];
+				echo "<tr>";
+					echo "<td>" . $row['accCode'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['address1'] . "</td>";
+					echo "<td>" . $row['address2']. "</td>";
+					echo "<td>" . $row['address3'] . "</td>";
+					echo "<td>" . $row['costYearToDate'] . "</td>";
+					echo "<td>" . $row['salesYearToDate']. "</td>";
+					echo "<td>" . $row['paid']. "</td>";
+					echo "<td>" . $row['balance']. "</td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?accCode={$row['accCode']}'>Edit</a></b></td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?id={$row['accCode']}'>Delete</a></b></td>";
+				echo "</tr>";
+					
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
+	 
+	 elseif (isset($_POST['descendingBal'])) {
+                $retrieveq = "SELECT * FROM DebtorsMaster ORDER BY balance DESC";
+                $result = $conn->query($retrieveq);
+		 echo "<form method='post' action=Debtors_Master_Input.php>";
+                echo "<table class = 'table table-striped'>
+                    <tr>
+						<th>Account Code</th>
+                        <th>Name</th>
+                        <th name='address1'>Address 1</th>
+                        <th>Address 2</th>
+                        <th>Address 3</th>
+                        <th>Cost Year To Date</th>
+						<th><button name='ascendingSYTD' id='ascendingSYTD'><img src='ascending.PNG' width='10' height='15' alt='ascendingSYTD'/></button>Sales Year To Date<button name='descendingSYTD' id='descendingSYTD'><img src='descending.PNG' width='10' height='15' alt='descendingSYTD'/></button></th>
+                        <th>Paid</th>
+						<th><button name='ascendingBal' id='ascendingBal'><img src='ascending.PNG' width='10' height='15' alt='ascendingBal'/></button>Balance<button name='descendingBal' id='descendingBal'><img src='descending.PNG' width='10' height='15' alt='descendingBal'/></button></th>
+						<th>Edit</th>
+						<th>Delete</th>
+					 </tr>";
+
+		 		if(is_array($result) || is_object($result))
+				{
+                foreach ($result as $row) {
+					
+                   $balance = $row['costYearToDate']-$row['paid'];
+				echo "<tr>";
+					echo "<td>" . $row['accCode'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['address1'] . "</td>";
+					echo "<td>" . $row['address2']. "</td>";
+					echo "<td>" . $row['address3'] . "</td>";
+					echo "<td>" . $row['costYearToDate'] . "</td>";
+					echo "<td>" . $row['salesYearToDate']. "</td>";
+					echo "<td>" . $row['paid']. "</td>";
+					echo "<td>" . $row['balance']. "</td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?accCode={$row['accCode']}'>Edit</a></b></td>";
+					echo "<td><b><a href='Debtors_Master_Input.php?id={$row['accCode']}'>Delete</a></b></td>";
+				echo "</tr>";
+   }
+}
+   echo " </table>";
+		 echo "</form>";
+ }
 	
 	//checking whcich button has been clicked and directing to the respective locations
 	elseif(isset($_POST['stock']))
