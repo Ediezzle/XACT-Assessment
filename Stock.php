@@ -73,14 +73,23 @@
     <br>
     <form action="Stock_Input.php" method="post">
         <div class="row">
-            <div class="col-lg-4">
+            <div class="col-lg-2">
                 <button class="btn btn-info btn-sm form-control" id="search" name="search" style="border-radius: 10px;">Search</button>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-2">
                 <button class="btn btn-info btn-sm form-control" id="open" name="open" style="border-radius: 10px;">Open</button>
             </div>
-            <div class="col-lg-4">
-                <button class="btn btn-info btn-sm form-control" id="delete" name="delete" style="border-radius: 10px;">Delete</button>
+            <div class="col-lg-2">
+                <button class="btn btn-info btn-sm form-control" id="invoiceDetail" name="invoiceDetail" style="border-radius: 10px;">Invoice Details</button>
+            </div>
+			<div class="col-lg-2">
+                <button class="btn btn-info btn-sm form-control" id="stockMaster" name="stockMaster" style="border-radius: 10px;">Stock Master</button>
+            </div>
+			<div class="col-lg-2">
+                <button class="btn btn-info btn-sm form-control" id="debtorsTransaction" name="debtorsTransaction" style="border-radius: 10px;">Debtors Transaction</button>
+            </div>
+			<div class="col-lg-2">
+                <button class="btn btn-info btn-sm form-control" id="debtorsMaster" name="debtorsMaster" style="border-radius: 10px;">Debtors Master</button>
             </div>
         </div>
     </form>

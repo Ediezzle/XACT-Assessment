@@ -11,27 +11,26 @@
  <body>
 
      <?php
-        //$subtotal=200;
+
         include_once 'connections.php';
+	 
+	 //checking if save button has been clicked
         if (isset($_POST['save'])) {
-			
+			//assigning variables to user entered values
             $date = $_POST['date'];
-            //$invoiceNumber = $_POST['invoiceNumber'];
             $accCode = $_POST['accCode'];
             $name = $_POST['name'];
             $itemNumber = $_POST['itemNumber'];
             $stockCode = $_POST['stockCode'];
             $quantitySold = $_POST['quantitySold'];
-            //$unitCost = $_POST['unitCost'];
-            //$unitSell = $_POST['unitSell'];
             $discount = $_POST['discount'];
-            //$subTotal = $quantitySold * $unitSell - $discount;
-			
+			$transactionType = $_POST['transactionType'];
+            
+			//fetching specific entries from the database
 			$retq = "SELECT * FROM Stock WHERE stockCode='$stockCode'";
 			$res=$conn->query($retq);
-			//$resString = serialize($res) ;
-			//$resInt = (int)$resString;
-			//echo $resInt;
+			
+			//casting some retrieved string values to doubles
 			foreach($res as $rows)
 			{	
 				$unitCostInt = (double) $rows['unitCost'];
@@ -41,9 +40,31 @@
 
 			$subTotal = (int)$quantitySold * $unitSellInt - $discount;
 			
-			$insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCostInt', '$unitSellInt', '$discount', '$subTotal')";
+			//capturing values into the database
+			$insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal, transactionType) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCostInt', '$unitSellInt', '$discount', '$subTotal', '$transactionType')";
 			$result = $conn->query($insertq);
 			
+			//fetching credit sales transactions
+			$retrieveq = "SELECT * FROM InvoiceDetail WHERE transactionType='Credit'";
+			$retResult = $conn->query($retrieveq);
+			
+			//variable assignment
+			foreach($retResult as $retRow)
+			{	
+				$d = $retRow['date'];
+				$nm = $retRow['name'];
+				$ac = $retRow['accCode'];
+				$tt = $retRow['transactionType'];
+				$in = $retRow['invoiceNumber'];
+				$gtv = $retRow['subTotal'];
+				$vv = 0.15*$gtv;
+			}
+			
+			//Creating entries into the DebtorsTransaction table whenever a credit sale occurs			
+			$insertInDebtorsTransaction = "INSERT INTO DebtorsTransaction VALUES ('$d', '$nm', '$ac', '$tt', '$in', '$gtv', '$vv')";
+			$insertDebtorsTransactionResult = $conn->query($insertInDebtorsTransaction);
+			
+						
 			//Reduce stock items by the number of items sold. Assumption is we can't sell something we don't have in stock so quantity will never be negative in Stock table.
 			
 			$deleteStockItem = "UPDATE `Stock` SET `quantity` = Stock.quantity-$quantitySold WHERE `Stock`.`stockCode` = '$stockCode'";
@@ -53,11 +74,19 @@
             $retrieveLastRecord = "SELECT * FROM InvoiceDetail ORDER BY invoiceNumber DESC LIMIT 1";
             $lastRecord = $conn->query($retrieveLastRecord);
 			$tsev = (int)$quantitySold*$unitSellInt*0.85;
-			
-			
-			
+						
+			//Incrementing quantity sold in the StockMaster table everytime an item is sold
 			$updateStockMaster = "UPDATE StockMaster SET quantitySold=StockMaster.quantitySold+$quantitySold, tsev=tsev+$tsev where stockCode='$stockCode'"; 
 			$res=$conn->query($updateStockMaster);
+			
+			if($insertDebtorsTransactionResult===TRUE)
+			{
+				echo "Transaction recorded in Debtors Transaction File";
+				echo "<br>";
+			}
+			
+			else
+				echo "Ooops! Failed to record transaction in Debtors Transaction File".$conn->error;
 			
 			if($res===TRUE)
 			{
@@ -80,14 +109,16 @@
 			
 			if($result===TRUE)
 			{
+				//displaying the successfully saved record
 				echo "The following record has been added successfully";
             ?> <form action="Invoice_Detail_Input.php" method="post">
         <div class="container-fluid bg-info">
             <h3 class="pageCenter"> Invoice Detail</h3>
             <br>
             <div class="row" style="text-align: center;">
-                <div class="col-lg-2"> Date</div>
+                <div class="col-lg-1"> Date</div>
                 <div class="col-lg-1"> Invoice Number</div>
+				<div class="col-lg-1"> Transaction Type</div>
                 <div class="col-lg-1"> Account Code</div>
                 <div class="col-lg-1"> Name & Surname</div>
                 <div class="col-lg-1"> Item Number</div>
@@ -97,12 +128,15 @@
                 <div class="col-lg-1"> Unit Sell</div>
                 <div class="col-lg-1 "> Discount</div>
 				<div class="col-lg-1 "> Sub Total</div>
+				
 
             </div>
             <div class="row">
-                <div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required value="<?php echo $date;?>"/>
+                <div class="col-lg-1"><input type="date" name="date" id="date" class="form-control" required value="<?php echo $date;?>"/>
                 </div>
                 <div class="col-lg-1"><input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" readonly value="<?php echo $invoiceNumber;?>"/>
+                </div>
+				<div class="col-lg-1"><input type="text" name="transactionType" id="transactionType" class="form-control" required value="<?php echo $transactionType;?>"/>
                 </div>
                 <div class="col-lg-1"><input type="text" name="accCode" id="accCode" class="form-control" required value="<?php echo $row['accCode'];?>"/>
                 </div>
@@ -122,9 +156,11 @@
                 </div>
 				<div class="col-lg-1"><input type="text" name="subTotal" id="subTotal" class="form-control" required value="<?php echo $subTotal;?>"/>
                 </div>
+				
+				
 
             </div>
-            <br />
+            <br/>
 
             <div class="row">
                 <div class="col-lg-4">
@@ -166,72 +202,34 @@
 			}
 		
 			
-			
-			
-			
-			/*
-			
-			$insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCost', '$unitSell', '$discount', '$subTotal')";
-			$deleteq = "DELETE FROM Stock WHERE stock.stockCode = '$stockCode'";  
-				$conn->query($deleteq);
-			$result = $conn->query($insertq);
-
-            $retrieveLastRecord = "SELECT * FROM InvoiceDetail ORDER BY invoiceNumber DESC LIMIT 1";
-            $lastRecord = $conn->query($retrieveLastRecord);
-
-            //$res = $conn->query($retrieveq);
-            if ($result === TRUE) {
-                echo "<p>Record(s) have been saved successfully!</p>";
-
-                echo "<table class = 'table table-striped'>
-                    <tr>
-                        <th>Date</th>
-                        <th>Invoice Number</th>
-                        <th>Account Code</th>
-                        <th>Name & Surname</th>
-                        <th>Item Number</th>
-                        <th>Stock Code</th>
-                        <th>Quantity Sold</th>
-                        <th>Unit Cost</th>
-                        <th>Unit Sell</th>
-                        <th>Discount</th>
-                        <th>Sub Total</th>";
-
-
-                echo "<tr>";
-                echo "<td>" . $date . "</td>";
-                echo "<td>";
-                foreach ($lastRecord as $row) {
-                    echo $row['invoiceNumber'];
-                }
-                echo "</td>";
-                echo "<td>" . $accCode . "</td>";
-                echo "<td>" . $name . "</td>";
-                echo "<td>" . $itemNumber . "</td>";
-                echo "<td>" . $stockCode . "</td>";
-                echo "<td>" . $quantitySold . "</td>";
-                echo "<td>" . $unitCost . "</td>";
-                echo "<td>" . $unitSell . "</td>";
-                echo "<td>" . $discount . "</td>";
-                echo "<td>" . $subTotal . "</td>";
-                echo "</tr>";
-                echo " </table>";
-				//$deleteq = "DELETE FROM Stock WHERE stock.stockCode = $stockCode";  
-				//$conn->query($deleteq);
-            } 
-			
-			else {
-                echo "Error adding record(s)!: " . $conn->error;
-            }
-            echo "<br>";
-			
-			*/
         } 
 	 
+	 //methods to redirect to respective locations
 	 elseif(isset($_POST['btic']))
 			{
 				header("Location: InvoiceDetail.php");
 			}
+	 
+	 elseif(isset($_POST['stock']))
+			{
+				header("Location: Stock.php");
+			}
+	 
+	 elseif(isset($_POST['stockMaster']))
+			{
+				header("Location: StockMaster.php");
+			}
+	 
+	 elseif(isset($_POST['debtorsTransaction']))
+			{
+				header("Location: DebtorsTransaction.php");
+			}
+	 
+	 elseif(isset($_POST['debtorsMaster']))
+			{
+				header("Location: DebtorsMaster.php");
+			}
+	 
 	 
 	/* elseif (isset($_POST['nextItem'])) {
             $date = $_POST['date'];
@@ -250,6 +248,8 @@
             $result = $conn->query($insertq);
         } 
 		*/
+	 
+	 //checking if search has been clicked and implementing the search algorithm
 		elseif (isset($_POST['search'])) {
             ?>
          <form method='POST' action="<?php echo $_SERVER['PHP_SELF'];  ?>">
@@ -276,13 +276,15 @@
     OR unitCost LIKE '%$st%'
     OR unitSell LIKE '%$st%'
     OR discount LIKE '%$st%'
-    OR subTotal LIKE '%$st%'";
+    OR subTotal LIKE '%$st%'
+	OR transactionType LIKE '%$st%'";
                 $result = $conn->query($searchq);
 
                 echo "<table class = 'table table-striped'>
                     <tr>
                         <th>Date</th>
                         <th>Invoice Number</th>
+						<th>Transaction Type</th>
                         <th>Account Code</th>
                         <th>Name & Surname</th>
                         <th>Item Number</th>
@@ -292,6 +294,7 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th>Sub Total</th>
+						
 					</tr>";
                 foreach ($result  as $row) {
 
@@ -299,6 +302,7 @@
                     echo "<tr>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['accCode'] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
                     echo "<td>" . $row['itemNumber'] . "</td>";
@@ -308,10 +312,12 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
+					
                     echo "</tr>";
                 }
                 echo " </table>";
-				
+			
+				//opening all records if open button has been clicked
             } elseif (isset($_POST['open'])) {
                 $retrieveq = "SELECT * FROM InvoiceDetail";
                 $result = $conn->query($retrieveq);
@@ -320,6 +326,7 @@
                     <tr>
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
+						<th>Transaction Type</th>
                         <th>Account Code</th>
                         <th>Name & Surname</th>
                         <th>Item Number</th>
@@ -329,12 +336,14 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+						
  					</tr>";
 					
                 foreach ($result as $row) {
                     echo "<tr>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['accCode'] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
                     echo "<td>" . $row['itemNumber'] . "</td>";
@@ -344,6 +353,7 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
+					
                    /* echo "<td><b><a href='Invoice_Detail_Input.php?invoiceId={$row['invoiceNumber']}'>Edit</a></b></td>";
              		echo "<td><b><a href='Invoice_Detail_Input.php?id={$row['invoiceNumber']}'>Delete</a></b></td>"; */
 
@@ -353,7 +363,7 @@
    echo " </table>";
 				echo "</form>";
  } 
-	 
+	 //sorting by date in descending order
 	 elseif (isset($_POST['descending'])) {
                 $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY date DESC";
                 $result = $conn->query($retrieveq);
@@ -362,6 +372,7 @@
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
                         <th>Account Code</th>
+						<th>Transaction Type</th>
                         <th>Name & Surname</th>
                         <th>Item Number</th>
                         <th>Stock Code</th>
@@ -370,6 +381,7 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+						
  					</tr>";
 					 
 		 		if(is_array($result) || is_object($result))
@@ -379,6 +391,7 @@
                     echo "<tr>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['accCode'] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
                     echo "<td>" . $row['itemNumber'] . "</td>";
@@ -388,8 +401,7 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
-
-					
+							
         echo "</tr>";
    }
 }
@@ -397,6 +409,7 @@
 		 echo "</form>";
  }
 	 
+	 //sorting by date in ascending order
 	 elseif (isset($_POST['ascending'])) {
                 $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY date ASC";
                 $result = $conn->query($retrieveq);
@@ -405,6 +418,7 @@
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
                         <th>Account Code</th>
+						<th>Transaction Type</th>
                         <th>Name & Surname</th>
                         <th>Item Number</th>
                         <th>Stock Code</th>
@@ -413,6 +427,7 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+						 
  					</tr>";
 
 		 		if(is_array($result) || is_object($result))
@@ -422,6 +437,7 @@
                     echo "<tr>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['accCode'] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
                     echo "<td>" . $row['itemNumber'] . "</td>";
@@ -431,15 +447,14 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
-
-					
+						
         echo "</tr>";
    }
 }
    echo " </table>";
 		 echo "</form>";
  } 
-	 
+	 //sorting by sub total in descending order
 	 elseif (isset($_POST['ascendingSubTotal'])) {
                 $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY subTotal ASC";
                 $result = $conn->query($retrieveq);
@@ -448,6 +463,7 @@
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
                         <th>Account Code</th>
+						<th>Transaction Type</th>
                         <th>Name & Surname</th>
                         <th>Item Number</th>
                         <th>Stock Code</th>
@@ -456,6 +472,7 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+						
  					</tr>";
 
 		 		if(is_array($result) || is_object($result))
@@ -465,6 +482,7 @@
                     echo "<tr>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['accCode'] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
                     echo "<td>" . $row['itemNumber'] . "</td>";
@@ -474,7 +492,6 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
-
 					
         echo "</tr>";
    }
@@ -482,7 +499,7 @@
    echo " </table>";
 		 echo "</form>";
  }
-	 
+	 //sorting by sub total in descending order
 	 elseif (isset($_POST['descendingSubTotal'])) {
                 $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY subTotal DESC";
                 $result = $conn->query($retrieveq);
@@ -491,6 +508,7 @@
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
                         <th>Account Code</th>
+						<th>Transaction Type</th>
                         <th>Name & Surname</th>
                         <th>Item Number</th>
                         <th>Stock Code</th>
@@ -499,6 +517,7 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
+						
  					</tr>";
 
 		 		if(is_array($result) || is_object($result))
@@ -508,6 +527,7 @@
                     echo "<tr>";
                     echo "<td>" . $row['date'] . "</td>";
                     echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
                     echo "<td>" . $row['accCode'] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
                     echo "<td>" . $row['itemNumber'] . "</td>";
@@ -517,8 +537,7 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
-
-					
+							
         echo "</tr>";
    }
 }
@@ -526,219 +545,7 @@
 		 echo "</form>";
  }
 	 
-	 elseif (isset($_GET['id'])) {
-$id = $_REQUEST['id'];
-  $retrieveq = "SELECT * FROM InvoiceDetail WHERE invoiceNumber=$id";
- $result = $conn->query($retrieveq);
-			
-			echo "<table class = 'table table-striped'>
-                    <tr>
-                        <th>Date</th>
-                        <th>Invoice Number</th>
-                        <th>Account Code</th>
-                        <th>Name & Surname</th>
-                        <th>Item Number</th>
-                        <th>Stock Code</th>
-                        <th>Quantity Sold</th>
-                        <th>Unit Cost</th>
-                        <th>Unit Sell</th>
-                        <th>Discount</th>
-                        <th>Sub Total</th>
-                        
-                        <th>Delete</th>
-					</tr>";
-
-                foreach ($result as $row) {
-                    echo "<tr>";
-                    echo "<td>" . $row['date'] . "</td>";
-                    echo "<td>" . $row['invoiceNumber'] . "</td>";
-                    echo "<td>" . $row['accCode'] . "</td>";
-                    echo "<td>" . $row['name'] . "</td>";
-                    echo "<td>" . $row['itemNumber'] . "</td>";
-                    echo "<td>" . $row['stockCode'] . "</td>";
-                    echo "<td>" . $row['quantitySold'] . "</td>";
-                    echo "<td>" . $row['unitCost'] . "</td>";
-                    echo "<td>" . $row['unitSell'] . "</td>";
-                    echo "<td>" . $row['discount'] . "</td>";
-                    echo "<td>" . $row['subTotal'] . "</td>";
-             		echo "<td><b><a href='Invoice_Detail_Input.php?del={$row['invoiceNumber']}'>Confirm</a></b></td>";
-        echo "</tr>";
-   }
-		 
-   echo " </table>";
- }
-	 
-	 elseif (isset($_GET['del'])) {
-                        $del = $_GET['del'];
-                        //SQL query for deletion.
-                        $deleteq = "DELETE FROM InvoiceDetail WHERE invoiceNumber=$del";
-                        $result = $conn->query($deleteq);
-		 				echo "Record successfully deleted!";
-                    }
-	 
-	 elseif(isset($_GET['invoiceId']))
-	 {
-		 $id = $_REQUEST['invoiceId'];
-  $retrieveq = "SELECT * FROM InvoiceDetail WHERE invoiceNumber=$id";
- $result = $conn->query($retrieveq);
-			
-			echo "<table class = 'table table-striped'>
-                    <tr>
-                        <th>Date</th>
-                        <th>Invoice Number</th>
-                        <th>Account Code</th>
-                        <th>Name & Surname</th>
-                        <th>Item Number</th>
-                        <th>Stock Code</th>
-                        <th>Quantity Sold</th>
-                        <th>Unit Cost</th>
-                        <th>Unit Sell</th>
-                        <th>Discount</th>
-                        <th>Sub Total</th>
-                        
-                        <th>Edit</th>
-					</tr>";
-
-                foreach ($result as $row) {
-                    echo "<tr>";
-                    echo "<td>" . $row['date'] . "</td>";
-                    echo "<td>" . $row['invoiceNumber'] . "</td>";
-                    echo "<td>" . $row['accCode'] . "</td>";
-                    echo "<td>" . $row['name'] . "</td>";
-                    echo "<td>" . $row['itemNumber'] . "</td>";
-                    echo "<td>" . $row['stockCode'] . "</td>";
-                    echo "<td>" . $row['quantitySold'] . "</td>";
-                    echo "<td>" . $row['unitCost'] . "</td>";
-                    echo "<td>" . $row['unitSell'] . "</td>";
-                    echo "<td>" . $row['discount'] . "</td>";
-                    echo "<td>" . $row['subTotal'] . "</td>";
-             		echo "<td><b><a href='Invoice_Detail_Input.php?ed={$row['invoiceNumber']}'>Confirm</a></b></td>";
-        		echo "</tr>";
-   }
-		 
-   echo " </table>";
-	 }
-	 
-	 elseif(isset($_GET['ed']))
-	 {
-		 $id = $_GET['ed'];
-		 $retrieveq = "SELECT * FROM InvoiceDetail WHERE invoiceNumber=$id";
- 		 $result = $conn->query($retrieveq);
-		 //$row = (array)$result;
-	$row = $result->fetch_array();
-		 $invNum = $row[1];
-		?> <form action="Invoice_Detail_Input.php" method="post">
-        <div class="container-fluid bg-info">
-            <h3 class="pageCenter"> Invoice Detail</h3>
-            <br>
-            <div class="row" style="text-align: center;">
-                <div class="col-lg-2"> Date</div>
-                <div class="col-lg-1"> Invoice Number</div>
-                <div class="col-lg-1"> Account Code</div>
-                <div class="col-lg-2"> Name & Surname</div>
-                <div class="col-lg-1"> Item Number</div>
-                <div class="col-lg-1"> Stock Code</div>
-                <div class="col-lg-1"> Quantity Sold</div>
-                <div class="col-lg-1"> Unit Cost</div>
-                <div class="col-lg-1"> Unit Sell</div>
-                <div class="col-lg-1 "> Discount</div>
-
-            </div>
-            <div class="row">
-                <div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required value="<?php echo $row[0];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" readonly value="<?php echo $row[1];?>">
-                </div>
-                <div class="col-lg-1"><input type="text" name="accCode" id="accCode" class="form-control" required value="<?php echo $row[2];?>"/>
-                </div>
-                <div class="col-lg-2"><input type="text" name="name" id="name" class="form-control" required value="<?php echo $row[3];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="itemNumber" id="itemNumber" class="form-control" required value="<?php echo $row[4];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="stockCode" id="stockCode" class="form-control" required value="<?php echo $row[5];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="quantitySold" id="quantitySold" class="form-control" required value="<?php echo $row[6];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="unitCost" id="unitCost" class="form-control" required value="<?php echo $row[7];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="unitSell" id="unitSell" class="form-control" required value="<?php echo $row[8];?>"/>
-                </div>
-                <div class="col-lg-1"><input type="text" name="discount" id="discount" class="form-control" required value="<?php echo $row[9];?>"/>
-                </div>
-
-            </div>
-            <br />
-
-            <div class="row">
-                <div class="col-lg-4">
-                    
-                </div>
-                <div class=" col-lg-4">
-                    <button class="btn btn-info btn-sm form-control" id="update" name="update">Update</button>
-                </div>
-
-                <div class="col-lg-4">
-                    
-                </div>
-
-            </div>
-            <br/>
-        </div>
-    </form>
-    <br>
-    <br>
-    <form action="Invoice_Detail_Input.php" method="post">
-        <div class="row">
-            <div class="col-lg-3">
-                <button class="btn btn-info btn-sm form-control" id="search" name="search">Search</button>
-            </div>
-            <div class="col-lg-3">
-                <button class="btn btn-info btn-sm form-control" id="open" name="open">Open</button>
-            </div>
-            <div class="col-lg-3">
-                <button class="btn btn-info btn-sm form-control" id="delete" name="delete">Delete</button>
-            </div>
-        </div>
-    </form>
-
-
-	<?php 
-	 }
-	 
-	 elseif(isset($_POST['update']))
-	 {
-		
-	
-		 	$date = $_POST['date'];
-            $invoiceNumber = $_POST['invoiceNumber'];
-            $accCode = $_POST['accCode'];
-            $name = $_POST['name'];
-            $itemNumber = $_POST['itemNumber'];
-            $stockCode = $_POST['stockCode'];
-            $quantitySold = $_POST['quantitySold'];
-            $unitCost = $_POST['unitCost'];
-            $unitSell = $_POST['unitSell'];
-            $discount = $_POST['discount'];
-            $subTotal = $quantitySold * $unitSell - $discount;
-		 
-		 	$update = "UPDATE `InvoiceDetail` SET `accCode` = '$accCode',
-			`name` = '$name', itemNumber='$itemNumber', stockCode='$stockCode', quantitySold='$quantitySold', unitCost='$unitCost', unitSell='$unitSell', discount='$discount', subTotal='$subTotal' WHERE invoiceNumber='$invoiceNumber'";
-		 	$conn->query($update);
-		 if($conn->query($update)===TRUE)
-		 {
-		 	echo "Record adited and saved successfully";
-		 echo "<br>";
-		 }
-		 
-		 else
-		 {
-			echo "Ooops!".$conn->error; 
-		 }
-		 
-		 
-	 }
-	 
-	 
+//terminating connection to the database	 
 $conn->close();
  
 ?>

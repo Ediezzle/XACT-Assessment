@@ -28,8 +28,7 @@
 			$tpev = $quantity*$unitCost*0.85;
 			$stockOnHand=$unitCost*$quantity;
 			
-			$updateStockMaster = "INSERT INTO StockMaster (stockCode, description, cost, sellingPrice, quantityPurchased, tpev, stockOnHand) VALUES ('$stockCode', '$description', '$unitCost', '$unitSell', '$quantity', $tpev, $stockOnHand) ON DUPLICATE KEY UPDATE description='$description', cost=cost+$unitCost*$quantity, sellingPrice=sellingPrice+$unitSell*$quantity, quantityPurchased=quantityPurchased+$quantity, tpev=tpev+$tpev, stockOnHand=stockOnHand+$stockOnHand";
-			//$updateStockMaster="INSERT INTO StockMaster (stockCode, description, cost, sellingPrice, quantityPurchased) VALUES ('rj45', 'fghy', 8, 9, 10) ON DUPLICATE KEY UPDATE description='rj45' cos=8 sellingPrice=9 quantityPurchased=10";
+			$updateStockMaster = "INSERT INTO StockMaster (date, stockCode, description, cost, sellingPrice, quantityPurchased, tpev, stockOnHand) VALUES ('$date', '$stockCode', '$description', '$unitCost', '$unitSell', '$quantity', $tpev, $stockOnHand) ON DUPLICATE KEY UPDATE date='$date', description='$description', cost=cost+$unitCost*$quantity, sellingPrice=sellingPrice+$unitSell*$quantity, quantityPurchased=quantityPurchased+$quantity, tpev=tpev+$tpev, stockOnHand=stockOnHand+$stockOnHand";
 			$res=$conn->query($updateStockMaster);
 			if($res===TRUE)
 			{
@@ -88,7 +87,7 @@
                 $st = $_POST['searchTerm'];
                 $searchq = " SELECT DISTINCT * FROM Stock
     WHERE stockCode LIKE '%$st%' 
-     OR date LIKE '%$st%'
+    OR date LIKE '%$st%'
     OR stockCode LIKE '%$st%'
     OR transactionType LIKE '%$st%'
     OR documentNumber LIKE '%$st%'
@@ -559,6 +558,26 @@ $id = $_REQUEST['id'];
 		  }
 		 
 	 }
+	 
+	 elseif(isset($_POST['invoiceDetail']))
+			{
+				header("Location: InvoiceDetail.php");
+			}
+	 
+	 elseif(isset($_POST['stockMaster']))
+			{
+				header("Location: StockMaster.php");
+			}
+	 
+	 elseif(isset($_POST['debtorsTransaction']))
+			{
+				header("Location: DebtorsTransaction.php");
+			}
+	 
+	 elseif(isset($_POST['debtorsMaster']))
+			{
+				header("Location: DebtorsMaster.php");
+			}
 	 
 $conn->close();
  

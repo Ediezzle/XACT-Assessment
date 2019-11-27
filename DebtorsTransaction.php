@@ -1,100 +1,81 @@
 <!doctype html>
 <html>
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initialscale=1.0">
+<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initialscale=1.0">
     <link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
     <link href="xact.css" rel="stylesheet" type="text/css" />
-    <title>Debtors Transaction</title>
+<title>Debtors Transaction</title>
 </head>
 
 <body>
+	
+	<br>
+		<h3 class = "pageCenter"><strong>Debtors Transactions</strong></h3>
+	
+	<form action="Debtors_Transaction_input.php" method="post">
+			
+				<div class="col-lg-4"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
+				<div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
+			
+		</form>
+	
+	<form action="Debtors_Transaction_Input.php" method="post">
+				
+				
+		<?php
+		include_once 'connections.php';
+		
+		$retrieveQuery = "SELECT * FROM DebtorsTransaction";
+		$res = $conn->query($retrieveQuery);
+		
+				
+                echo "<table class = 'table table-striped'>
+                    <tr>
+                        <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
+                        <th>Name</th>
+                        <th>Account Code</th>
+						<th>Transaction Type</th>
+                        <th>Invoice Number</th>
+						<th>Vat Value</th>
+                        <th align='center'><button name='ascendingGTV' id='ascendingGTV'><img src='ascending.PNG' width='10' height='15' alt='ascendingGTV'/></button>Gross Transaction Value<button name='descendingGTV' id='descendingGTV'><img src='descending.PNG' width='10' height='15' alt='descendingGTV'/></button></th>
+					</tr>";
 
+				foreach($res as $row)
+				{
+					echo "<tr>";
+					echo "<td>" . $row['date'] . "</td>";
+					echo "<td>" . $row['name'] . "</td>";
+					echo "<td>" . $row['accCode'] . "</td>";
+					echo "<td>" . $row['transactionType'] . "</td>";
+					echo "<td>" . $row['invoiceNumber'] . "</td>";
+					echo "<td>" . $row['vatValue'] . "</td>";
+					echo "<td align='center'>" . $row['grossTransactionValue'] . "</td>";
+					echo "</tr>";
+				}
+                echo " </table>";
+		
+	$conn->close();
+		?>
+	</form>
+	
+	<br>
+    <br>
     <form action="Debtors_Transaction_Input.php" method="post">
-        <div class="container-fluid bg-info">
-            <h3 class="pageCenter"> Stock Details</h3>
-            <br>
-            <div class="row">
-                <div class="col-lg-2"> <strong>Account Code</strong></div>
-                <div class="col-lg-2"> <strong>Date</div></strong>
-                <div class="col-lg-2"> <strong>Transaction Type</strong></div>
-                <div class="col-lg-2"> <strong>Document Number</strong></div>
-                <div class="col-lg-2"> <strong>Gross Transaction Value</strong></div>
-                <div class="col-lg-1"> <strong>VAT Value</strong></div>
-                
-            </div>
-            <div class="row">
-                <div class="col-lg-2"><input type="text" name="accCode" id="accCode" class="form-control" required />
-                </div>
-				<div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" required />
-                </div>
-                <div class="col-lg-2">
-					
-						<label for="transLab" ></label>
-							<select class="form-control" id="transactionType" name="transactionType" style="margin-top: -12%;">
-								<option>Cash</option>
-								<option>Card</option>
-							</select>
-					
-                </div>
-                <div class="col-lg-2"><input type="text" name="documentNumber" id="documentNumber" class="form-control" required />
-                </div>
-                
-                <div class="col-lg-2"><input type="text" name="grossTransactionValue" id="grossTransactionValue" class="form-control" required />
-                </div>
-                <div class="col-lg-1"><input type="text" name="vatValue" id="vatValue" class="form-control" required />
-                </div>
-            </div>
-            <br/>
-
-            <div class="row">
-                <div class="col-lg-3">
-                    <a href="InvoiceDetail.php"> <button class="btn btn-info btn-sm formcontrol" id="save" name="save">Save </button></a>
-                </div>
-                <div class=" col-lg-3">
-                    <button class="btn btn-info btn-sm form-control" id="nextItem" name="nextItem" style="text-align: right;">Next Item</button>
-                </div>
-
-            </div>
-            <br />
-        </div>
-    </form>
-    <br>
-    <br>
-    <form action="Stock_Input.php" method="post">
         <div class="row">
-            <div class="col-lg-4">
-                <button class="btn btn-info btn-sm form-control" id="search" name="search" style="border-radius: 10px;">Search</button>
+            <div class="col-lg-3">
+                <button class="btn btn-info btn-sm form-control" id="stock" name="stock" style="border-radius: 10px;">Stock</button>
             </div>
-            <div class="col-lg-4">
-                <button class="btn btn-info btn-sm form-control" id="open" name="open" style="border-radius: 10px;">Open</button>
+			<div class="col-lg-3">
+                <button class="btn btn-info btn-sm form-control" id="stockMaster" name="stockMaster" style="border-radius: 10px;">Stock Master</button>
             </div>
-            <div class="col-lg-4">
-                <button class="btn btn-info btn-sm form-control" id="delete" name="delete" style="border-radius: 10px;">Delete</button>
+			<div class="col-lg-3">
+                <button class="btn btn-info btn-sm form-control" id="invoiceDetail" name="invoiceDetail" style="border-radius: 10px;">Invoice Details</button>
+            </div>
+			<div class="col-lg-3">
+                <button class="btn btn-info btn-sm form-control" id="debtorsMaster" name="debtorsMaster" style="border-radius: 10px;">Debtors Master</button>
             </div>
         </div>
     </form>
-
-
-
-
-
-
-
-    <script src="bootstrap/js/jquery.js" type="text/javascript"></script>
-    <script src="bootstrap/js/bootstrap.js" type="text/javascript"></script>
-    <script>
-        function displayTotal() {
-            document.getElementById("subTotal").innerHTML
-        }
-    </script>
-    <script>
-        function refreshPage() {
-            window.location.reload();
-        }
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 </body>
-
 </html>
