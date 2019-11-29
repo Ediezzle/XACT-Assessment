@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 28, 2019 at 09:22 AM
+-- Generation Time: Nov 29, 2019 at 04:14 PM
 -- Server version: 5.7.26
 -- PHP Version: 7.2.18
 
@@ -47,8 +47,10 @@ CREATE TABLE IF NOT EXISTS `debtorsmaster` (
 --
 
 INSERT INTO `debtorsmaster` (`accCode`, `name`, `address1`, `address2`, `address3`, `costYearToDate`, `salesYearToDate`, `paid`, `balance`) VALUES
-(4029, 'Edmore', NULL, NULL, NULL, 1050, 1288, 70, 1218),
-(12101, 'Sam', 'er', '', '', 3752, 4032, 300, 3732);
+(4029, 'Edmore Mandikiyana', '60 Pritchard St, JHB', '', '', 2100, 2576, 300, 2276),
+(12101, 'Sam', 'er', '', '', 3752, 4032, 300, 3732),
+(14100, 'Edmore', NULL, NULL, NULL, 375, 468, 300, 168),
+(12100, 'Edmore', NULL, NULL, NULL, 1230, 1640, 300, 1340);
 
 -- --------------------------------------------------------
 
@@ -91,7 +93,12 @@ INSERT INTO `debtorstransaction` (`date`, `name`, `accCode`, `transactionType`, 
 ('2019-11-05', 'Sam', '12101', 'Credit', 2558916, 144, 21.6),
 ('2019-11-30', 'Sam', '12101', 'Credit', 2558927, 144, 21.6),
 ('2019-11-06', 'Edmore', '4029', 'Credit', 2558940, 636, 95.4),
-('2019-11-06', 'Edmore', '4029', 'Credit', 2558941, 636, 95.4);
+('2019-11-06', 'Edmore', '4029', 'Credit', 2558941, 636, 95.4),
+('2019-12-01', 'Desmond', '4000', 'Credit', 2558944, 90, 13.5),
+('2019-12-01', 'Ediezzle', '14100', 'Credit', 2558947, 178, 26.7),
+('2019-12-02', 'Edmore', '12100', 'Credit', 2558948, 115, 17.25),
+('2019-12-01', 'Edmore', '12100', 'Credit', 2558950, 93, 13.95),
+('2019-11-30', 'Edmore', '14100', 'Credit', 2558964, 96, 14.4);
 
 -- --------------------------------------------------------
 
@@ -115,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `invoicedetail` (
   `description` varchar(150) DEFAULT NULL,
   `transactionType` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`invoiceNumber`)
-) ENGINE=MyISAM AUTO_INCREMENT=2558942 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2558965 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `invoicedetail`
@@ -239,7 +246,30 @@ INSERT INTO `invoicedetail` (`date`, `invoiceNumber`, `accCode`, `name`, `itemNu
 ('2019-11-05', 2558938, '', 'ffd', 1, 'july', 6, 75, 92, 5, 547, NULL, 'Cash'),
 ('2019-11-06', 2558939, '14100', 'Edmore', 1, 'july', 7, 75, 92, 8, 636, NULL, 'Cash'),
 ('2019-11-06', 2558940, '4029', 'Edmore', 1, 'july', 7, 75, 92, 8, 636, NULL, 'Credit'),
-('2019-11-06', 2558941, '4029', 'Edmore', 1, 'july', 7, 75, 92, 8, 636, NULL, 'Credit');
+('2019-11-06', 2558941, '4029', 'Edmore', 1, 'july', 7, 75, 92, 8, 636, NULL, 'Credit'),
+('2019-11-29', 2558942, '4000', 'Desmond', 1, 'july', 1, 75, 92, 2, 90, NULL, 'Cash'),
+('2019-11-29', 2558943, '4000', 'Desmond', 1, 'july', 1, 75, 92, 2, 90, NULL, 'Cash'),
+('2019-12-01', 2558944, '4000', 'Desmond', 1, 'july', 1, 75, 92, 2, 90, NULL, 'Credit'),
+('2019-12-01', 2558945, '4000', 'Tatenda', 1, 'july', 1, 75, 92, 0, 92, NULL, 'Cash'),
+('2019-12-01', 2558946, '14100', 'Ediezzle', 1, 'july', 2, 75, 92, 6, 178, NULL, 'Credit'),
+('2019-12-01', 2558947, '14100', 'Ediezzle', 1, 'july', 2, 75, 92, 6, 178, NULL, 'Credit'),
+('2019-12-02', 2558948, '12100', 'Edmore', 1, 'abcd', 6, 15, 20, 5, 115, NULL, 'Credit'),
+('2019-11-12', 2558949, '11100', 'Edmore', 1, 'abcd', 4, 15, 20, 5, 75, NULL, 'Cash'),
+('2019-12-01', 2558950, '12100', 'Edmore', 1, 'abcd', 5, 15, 20, 7, 93, NULL, 'Credit'),
+('2019-11-04', 2558951, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558952, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558953, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558954, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558955, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558956, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558957, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558958, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558959, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558960, '12100', 'Ediezzle', 1, 'abcdef', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-04', 2558961, '12100', 'Ediezzle', 1, 'r076198l', 6, 15, 20, 0, 120, NULL, 'Cash'),
+('2019-11-05', 2558962, '14100', 'Edmore', 1, 'r076198l', 5, 15, 20, 0, 100, NULL, 'Cash'),
+('2019-11-05', 2558963, '14100', 'Edmore', 1, 'r076198l', 5, 15, 20, 0, 100, NULL, 'Cash'),
+('2019-11-30', 2558964, '14100', 'Edmore', 1, 'qwerty', 5, 15, 20, 4, 96, NULL, 'Credit');
 
 -- --------------------------------------------------------
 
@@ -265,21 +295,16 @@ CREATE TABLE IF NOT EXISTS `stock` (
 --
 
 INSERT INTO `stock` (`stockCode`, `date`, `transactionType`, `documentNumber`, `quantity`, `unitCost`, `unitSell`, `description`) VALUES
-('R120392L', '2019-11-01', 'Cash', 23415, 80, 345, 426, 'summer deals'),
 ('r134762j', '2019-11-22', 'cash', 32769, 34, 772.4, 922.5, 'goodies'),
 ('r142637t', '2019-11-22', 'Cash', 13456, 22, 332, 442, ''),
-('s203j', '2019-11-04', 'Credit', 13692, -60, 67, 72, 'fayt ayt ayt'),
 ('fhg', '2019-11-03', 'Cash', 35465, 5, 6, 7, 'ola ola'),
 ('rj45', '2019-11-04', 'Cash', 13692, 0, 4, 5, 'cool stuff'),
 ('s21', '2019-11-04', 'Credit', 13692, 4, 4, 5, 'gooda gooda'),
-('qwerty', '2019-11-04', 'Credit', 13692, -62, 4, 5, 'gwara gwara'),
 ('n', '2019-11-05', 'Cash', 8, 7, 6, 8, 'yuuh'),
-('vz', '2019-11-06', 'Cash', 324, 4, 4, 6, 'agshgdf'),
 ('z68', '2019-11-06', 'Cash', 8765, 12, 45, 52, 'adhesive glue'),
 ('yc5', '2019-11-04', 'Cash', 76589, 7, 56, 70, 'yyyyyyyyyy'),
-('june', '2019-11-12', 'Cash', 13692, -32, 75, 92, 'juneeeeeeeeeeeeeeee'),
-('july', '2019-11-12', 'Cash', 13692, -94, 75, 92, 'julyyyyyyyyyyyyyy'),
-('damn', '2019-11-04', 'Cash', 34567, -27, 6, 7, 'qazsxdcf');
+('abcd', '2019-11-30', 'Cash', 1234, 35, 15, 20, 'hot summer'),
+('qwerty', '2019-11-29', 'Cash', 12345, 30, 15, 20, 'chill beef ');
 
 -- --------------------------------------------------------
 
@@ -307,18 +332,10 @@ CREATE TABLE IF NOT EXISTS `stockmaster` (
 --
 
 INSERT INTO `stockmaster` (`date`, `stockCode`, `description`, `cost`, `sellingPrice`, `tpev`, `tsev`, `quantityPurchased`, `quantitySold`, `stockOnHand`) VALUES
-(NULL, 'rj45', 'cool stuff', 24, 29, NULL, NULL, 14, 8, NULL),
-(NULL, 's21', 'gooda gooda', 4, 5, NULL, NULL, 4, NULL, NULL),
-(NULL, 'qwerty', 'gwara gwara', 4, 5, NULL, NULL, 62, NULL, NULL),
-(NULL, 'n', 'yuuh', 6, 8, NULL, NULL, 7, NULL, NULL),
-(NULL, 'vz', 'agshgdf', 4, 6, NULL, NULL, 8, 8, NULL),
-(NULL, 'z68', 'adhesive glue', 45, 52, 459, NULL, 12, 0, NULL),
-(NULL, 'yc5', 'yyyyyyyyyy', 56, 70, 2189.6, 773.5, 46, 13, NULL),
-(NULL, 'june', 'juneeeeeeeeeeeeeeee', 75, 92, 828.75, NULL, 13, 45, 975),
-(NULL, 'july', 'julyyyyyyyyyyyyyy', 75, 92, 828.75, 7294.399999999998, 13, 121, 975),
-(NULL, 'damn', 'qazsxdcf', 6, 7, 25.5, 47.6, 5, 32, 30),
-('2019-11-26', 'R140392L', 'hot hot', 50025, 61770, 63342, 0, 216, 0, 74520),
-('2019-11-01', 'R120392L', 'summer deals', 345, 426, 21114, 0, 72, 0, 24840);
+('2019-11-30', 'r076198l', 'hot summer', 165, 220, 255, 272, 20, 16, 300),
+('2019-11-30', 'abcdef', 'hot summer', 15, 20, 127.5, 1020, 10, 60, 150),
+('2019-11-29', 'qwerty', 'chill beef ', 390, 520, 446.25, 85, 35, 5, 525),
+('2019-11-30', 'abcd', 'hot summer', 1060, 1415, 1079.5, 255, 92, 15, 1270);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

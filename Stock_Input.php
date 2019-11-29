@@ -14,7 +14,7 @@
 	 	//referencing the connections file which establishes a connection to database
         include_once 'connections.php';
 	 
-	 	//checking whether the user has clicked the 'save' and responding accordingly
+	 	//checking whether the user has clicked the 'save' button and responding accordingly
         if (isset($_POST['save'])) {
             $stockCode = $_POST['stockCode'];
             $date = $_POST['date'];
@@ -25,7 +25,7 @@
             $unitSell = $_POST['unitSell'];
             $description = $_POST['description'];
 			
-			//capuring values into the database for new items and updating for existing items (upon replenishment)
+			//capturing values into the database for new items and updating for existing items (upon replenishment)
             $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell', '$description') ON DUPLICATE KEY UPDATE date='$date', transactionType='$transactionType', documentNumber='$documentNumber', quantity=quantity+'$quantity', unitCost='$unitCost', unitSell='$unitSell', description='$description'";
             $result = $conn->query($insertq);
             $tpev = (double) ($quantity * $unitCost * 0.85);
@@ -78,7 +78,6 @@
             $searchq = " SELECT DISTINCT * FROM Stock
     WHERE stockCode LIKE '%$st%' 
     OR date LIKE '%$st%'
-    OR stockCode LIKE '%$st%'
     OR transactionType LIKE '%$st%'
     OR documentNumber LIKE '%$st%'
     OR quantity LIKE '%$st%'
