@@ -11,8 +11,11 @@
 
 <body>
 	<?php
+	
+	//referencing the file which contains code for establishing a connection to the database
 	include_once 'connections.php';
 
+	//displaying search results
 	if (isset($_POST['find'])) {
 		$st = $_POST['searchTerm'];
 		$searchq = " SELECT DISTINCT * FROM StockMaster
@@ -28,6 +31,8 @@
     OR stockOnHand LIKE '%$st%'";
 		$result = $conn->query($searchq);
 
+		echo "<h3 class='pageCenter'> Stock Master</h3>
+                <br>";
 		echo "<table class = 'table table-striped'>
                     <tr>
 						<th>Date</th>
@@ -57,10 +62,15 @@
 			echo "</tr>";
 		}
 		echo " </table>";
-	} elseif (isset($_POST['descending'])) {
+	} 
+	
+	//sorting by date in descending order
+	elseif (isset($_POST['descending'])) {
 		$retrieveq = "SELECT * FROM StockMaster ORDER BY date DESC";
 		$result = $conn->query($retrieveq);
 		echo "<form method='post' action=Stock_Master_Input.php>";
+		echo "<h3 class='pageCenter'>Stock Master</h3>
+                <br>";
 		echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Stock Code</th>
@@ -70,9 +80,8 @@
                         <th>Total Purchases Excluding Vat</th>
                         <th>Total Sales Excluding Vat</th>
                         <th>Total Quantity Purchased</th>
-                        <th><button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button>Sub Total<button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
+                        <th>Quantity Sold<button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button><button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
                         <th>Stock On Hand</th>
-                      
  					</tr>";
 
 		if (is_array($result) || is_object($result)) {
@@ -94,10 +103,15 @@
 		}
 		echo " </table>";
 		echo "</form>";
-	} elseif (isset($_POST['ascending'])) {
+	} 
+	
+	//sorting by date in ascending order
+	elseif (isset($_POST['ascending'])) {
 		$retrieveq = "SELECT * FROM StockMaster ORDER BY date ASC";
 		$result = $conn->query($retrieveq);
 		echo "<form method='post' action='Stock_Master_Input.php'>";
+		echo "<h3 class='pageCenter'> Stock Master</h3>
+                <br>";
 		echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Stock Code</th>
@@ -107,7 +121,7 @@
                         <th>Total Purchases Excluding Vat</th>
                         <th>Total Sales Excluding Vat</th>
                         <th>Total Quantity Purchased</th>
-                        <th><button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button>Sub Total<button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
+                        <th>Quantity Sold<button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button><button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
                         <th>Stock On Hand</th>
                         
 						 
@@ -132,10 +146,15 @@
 		}
 		echo " </table>";
 		echo "</form>";
-	} elseif (isset($_POST['ascendingQuantitySold'])) {
+	} 
+	
+	//sorting by quantity sold in ascending order
+	elseif (isset($_POST['ascendingQuantitySold'])) {
 		$retrieveq = "SELECT * FROM StockMaster ORDER BY quantitySold ASC";
 		$result = $conn->query($retrieveq);
 		echo "<form method='post' action='Stock_Master_Input.php'>";
+		echo "<h3 class='pageCenter'> Stock Master</h3>
+                <br>";
 		echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Stock Code</th>
@@ -145,9 +164,8 @@
                         <th>Total Purchases Excluding Vat</th>
                         <th>Total Sales Excluding Vat</th>
                         <th>Total Quantity Purchased</th>
-                        <th><button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button>Sub Total<button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
+                        <th>Quantity Sold<button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button><button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
                         <th>Stock On Hand</th>
-						
  					</tr>";
 
 		if (is_array($result) || is_object($result)) {
@@ -165,16 +183,20 @@
 				echo "<td>" . $row['quantitySold'] . "</td>";
 				echo "<td>" . $row['stockOnHand'] . "</td>";
 				echo "</tr>";
-
 				echo "</tr>";
 			}
 		}
 		echo " </table>";
 		echo "</form>";
-	} elseif (isset($_POST['descendingQuantitySold'])) {
+	} 
+	
+	//sorting by quantity sold in descending order
+	elseif (isset($_POST['descendingQuantitySold'])) {
 		$retrieveq = "SELECT * FROM StockMaster ORDER BY quantitySold DESC";
 		$result = $conn->query($retrieveq);
 		echo "<form method='post' action=Stock_Master_Input.php>";
+		echo "<h3 class='pageCenter'> Stock Master</h3>
+                <br>";
 		echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Stock Code</th>
@@ -184,11 +206,8 @@
                         <th>Total Purchases Excluding Vat</th>
                         <th>Total Sales Excluding Vat</th>
                         <th>Total Quantity Purchased</th>
-                        <th><button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button>Sub Total<button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
+                        <th>Quantity Sold<button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button><button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
                         <th>Stock On Hand</th>
-                        
-                        
-						
  					</tr>";
 
 		if (is_array($result) || is_object($result)) {
@@ -210,7 +229,10 @@
 		}
 		echo " </table>";
 		echo "</form>";
-	} elseif (isset($_POST['stock'])) {
+	} 
+	
+	//redirecting to the respective pages
+	elseif (isset($_POST['stock'])) {
 		header("Location: Stock.php");
 	} elseif (isset($_POST['invoiceDetail'])) {
 		header("Location: InvoiceDetail.php");
@@ -220,6 +242,7 @@
 		header("Location: DebtorsMaster.php");
 	}
 
+	//terminating connection with the database
 	$conn->close();
 	?>
 

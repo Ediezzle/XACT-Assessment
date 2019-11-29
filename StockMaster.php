@@ -13,7 +13,7 @@
 
 	<br>
 	<h3 class="pageCenter"><strong>Stock Master</strong></h3>
-
+	<br>
 	<form action="Stock_Master_Input.php" method="post">
 
 		<div class="col-lg-4"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
@@ -50,7 +50,7 @@
                         <th>Total Purchases Excluding Vat</th>
 						<th>Total Sales Excluding Vat</th>
                         <th>Total Quantity Purchased</th>
-                        <th><button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button>Quantity Sold<button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
+                        <th>Quantity Sold<button name='ascendingQuantitySold' id='ascendingQuantitySold'><img src='ascending.PNG' width='10' height='15' alt='ascendingQuantitySold'/></button><span></span><button name='descendingQuantitySold' id='descendingQuantitySold'><img src='descending.PNG' width='10' height='15' alt='descendingQuantitySold'/></button></th>
                         <th>Stock on Hand</th>
 					</tr>";
 
@@ -69,7 +69,8 @@
 			echo "</tr>";
 		}
 		echo " </table>";
-		echo "<h4><strong>TOTALS</strong><h4>";
+		echo "<h4 class='pageCenter'><strong>TOTALS</strong><h4>";
+		echo "<br>";
 		echo "<table class = 'table table-striped'>
                     <tr>
                         <th>Cost</th>
@@ -84,53 +85,53 @@
 		$fetchCostTotal = "SELECT SUM(cost) c FROM StockMaster ";
 		$executeFetchCostTotal = $conn->query($fetchCostTotal);
 		foreach ($executeFetchCostTotal  as $costTotalRow) {
-			$stringCostTotal = $costTotalRow['c'];
+			$doubleCostTotal = (double)$costTotalRow['c'];
 		}
 
 		$fetchSellingPriceTotal = "SELECT SUM(sellingPrice) sp FROM StockMaster ";
 		$executeFetchSellingPriceTotal = $conn->query($fetchSellingPriceTotal);
 		foreach ($executeFetchSellingPriceTotal  as $sellingPriceTotalRow) {
-			$stringSellingPriceTotal = $sellingPriceTotalRow['sp'];
+			$doubleSellingPriceTotal = (double)$sellingPriceTotalRow['sp'];
 		}
 
 		$fetchTpev = "SELECT SUM(tpev) tp FROM StockMaster ";
 		$executeTpev = $conn->query($fetchTpev);
 		foreach ($executeTpev as $tpevRow) {
-			$stringTpev = $tpevRow['tp'];
+			$doubleTpev = (double)$tpevRow['tp'];
 		}
 
 		$fetchTsev = "SELECT SUM(tsev) ts FROM StockMaster ";
 		$executeTsev = $conn->query($fetchTsev);
 		foreach ($executeTsev as $tsevRow) {
-			$stringTsev = $tsevRow['ts'];
+			$doubleTsev = (double)$tsevRow['ts'];
 		}
 
 		$fetchQuantityPurchasedTotal = "SELECT SUM(quantityPurchased) qp FROM StockMaster ";
 		$executeQuantityPurchasedTotal = $conn->query($fetchQuantityPurchasedTotal);
 		foreach ($executeQuantityPurchasedTotal as $qpRow) {
-			$stringQuantityPurchasedTotal = $qpRow['qp'];
+			$intQuantityPurchasedTotal = (int)$qpRow['qp'];
 		}
 
 		$fetchQuantitySoldTotal = "SELECT SUM(quantitySold) qs FROM StockMaster ";
 		$executeQuantitySoldTotal = $conn->query($fetchQuantitySoldTotal);
 		foreach ($executeQuantitySoldTotal as $qsRow) {
-			$stringQuantitySoldTotal = $qsRow['qs'];
+			$intQuantitySoldTotal = (int)$qsRow['qs'];
 		}
 
 		$fetchStockOnHandTotal = "SELECT SUM(stockOnHand) soh FROM StockMaster ";
 		$executeStockOnHandTotal = $conn->query($fetchStockOnHandTotal);
 		foreach ($executeStockOnHandTotal as $sohRow) {
-			$stringStockOnHandTotal = $sohRow['soh'];
+			$doubleStockOnHandTotal = (double)$sohRow['soh'];
 		}
 
 		echo "<tr>";
-		echo "<td>" . $stringCostTotal . "</td>";
-		echo "<td>" . $stringSellingPriceTotal . "</td>";
-		echo "<td>" . $stringTpev . "</td>";
-		echo "<td>" . $stringTsev . "</td>";
-		echo "<td>" . $stringQuantityPurchasedTotal . "</td>";
-		echo "<td>" . $stringQuantitySoldTotal . "</td>";
-		echo "<td>" . $stringStockOnHandTotal . "</td>";
+		echo "<td>" . $doubleCostTotal . "</td>";
+		echo "<td>" . $doubleSellingPriceTotal . "</td>";
+		echo "<td>" . $doubleTpev . "</td>";
+		echo "<td>" . $doubleTsev . "</td>";
+		echo "<td>" . $intQuantityPurchasedTotal . "</td>";
+		echo "<td>" . $intQuantitySoldTotal . "</td>";
+		echo "<td>" . $doubleStockOnHandTotal . "</td>";
 		echo "</tr>";
 		echo " </table>";
 

@@ -11,11 +11,10 @@
 
 <body>
 	<h3 class="pageCenter"> <b>Debtors Master</b></h3>
-	<br>
+	<br >
 	<?php
 	include_once 'connections.php';
 	echo "<form method='post' action='Debtors_Master_Input.php'>
-			 
                 <table class = 'table table-striped'>
                     <tr>
                         <th>Account Code</th>
@@ -33,8 +32,6 @@
 	$retrieveq = "SELECT * FROM DebtorsMaster";
 	$result = $conn->query($retrieveq);
 
-
-	//if (is_array($result) || is_object($result)) {
 	foreach ($result as $row) {
 		$balance = $row['costYearToDate'] - $row['paid'];
 		echo "<td>" . $row['accCode'] . "</td>";
@@ -50,10 +47,12 @@
 		echo "<td><b><a href='Debtors_Master_Input.php?id={$row['accCode']}'>Delete</a></b></td>";
 		echo "</tr>";
 	}
-	//}
+
 	echo " </table>";
 	echo "</form>";
-	echo "<h4><strong>TOTALS</strong><h4>";
+	echo "<br >";
+	echo "<h4 class='pageCenter'><strong>TOTALS</strong><h4>";
+	echo "<br >";
 	echo   "<table class = 'table table-striped'>
                     <tr>
                         <th>Cost Year To Date</th>
@@ -67,26 +66,26 @@
 	$fetchCostYearToDateTotal = "SELECT SUM(costYearToDate) cytd FROM DebtorsMaster ";
 	$executeFetchCostYearToDateTotal = $conn->query($fetchCostYearToDateTotal);
 	foreach ($executeFetchCostYearToDateTotal as $rcytd) {
-		$stringCostYearToDateTotal = $rcytd['cytd'];
+		$doubleCostYearToDateTotal = (double) ($rcytd['cytd']);
 	}
 
 	$fetchSalesYearToDateTotal = "SELECT SUM(salesYearToDate) sytd FROM DebtorsMaster ";
 	$executeFetchSalesYearToDateTotal = $conn->query($fetchSalesYearToDateTotal);
 	foreach ($executeFetchSalesYearToDateTotal as $rsytd) {
-		$stringSalesYearToDateTotal = $rsytd['sytd'];
+		$doubleSalesYearToDateTotal = (double) ($rsytd['sytd']);
 	}
 
 	$fetchPaidTotal = "SELECT SUM(paid) p FROM DebtorsMaster ";
 	$executeFetchPaidTotal = $conn->query($fetchPaidTotal);
 	foreach ($executeFetchPaidTotal as $rp) {
-		$stringPaidTotal = $rp['p'];
+		$doublePaidTotal = (double) ($rp['p']);
 	}
 
-	$balance = $stringCostYearToDateTotal - $stringPaidTotal;
+	$balance = $doubleCostYearToDateTotal - $doublePaidTotal;
 	echo "<tr>";
-	echo "<td>" . $stringCostYearToDateTotal . "</td>";
-	echo "<td>" . $stringSalesYearToDateTotal . "</td>";
-	echo "<td>" . $stringPaidTotal . "</td>";
+	echo "<td>" . $doubleCostYearToDateTotal . "</td>";
+	echo "<td>" . $doubleSalesYearToDateTotal . "</td>";
+	echo "<td>" . $doublePaidTotal . "</td>";
 	echo "<td>" . $balance . "</td>";
 	echo "</tr>";
 	echo " </table>";
@@ -95,8 +94,8 @@
 
 	$conn->close();
 	?>
-	<br>
-	<br>
+	<br >
+	<br >
 	<form action="Debtors_Master_Input.php" method="post">
 		<div class="row">
 			<div class="col-lg-1">

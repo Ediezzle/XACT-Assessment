@@ -11,8 +11,10 @@
  <body>
 
      <?php
-        //$subtotal=200;
+	 	//referencing the connections file which establishes a connection to database
         include_once 'connections.php';
+	 
+	 	//checking whether the user has clicked the 'save' and responding accordingly
         if (isset($_POST['save'])) {
             $stockCode = $_POST['stockCode'];
             $date = $_POST['date'];
@@ -22,15 +24,19 @@
             $unitCost = $_POST['unitCost'];
             $unitSell = $_POST['unitSell'];
             $description = $_POST['description'];
-
-            $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell', '$description')";
+			
+			//capuring values into the database for new items and updating for existing items (upon replenishment)
+            $insertq = "INSERT INTO Stock VALUES('$stockCode','$date', '$transactionType', '$documentNumber', '$quantity', '$unitCost', '$unitSell', '$description') ON DUPLICATE KEY UPDATE date='$date', transactionType='$transactionType', documentNumber='$documentNumber', quantity=quantity+'$quantity', unitCost='$unitCost', unitSell='$unitSell', description='$description'";
             $result = $conn->query($insertq);
-            $tpev = $quantity * $unitCost * 0.85;
-            $stockOnHand = $unitCost * $quantity;
+            $tpev = (double) ($quantity * $unitCost * 0.85);
+            $stockOnHand = (double)($unitCost * $quantity);
 
-            $updateStockMaster = "INSERT INTO StockMaster (date, stockCode, description, cost, sellingPrice, quantityPurchased, tpev, stockOnHand) VALUES ('$date', '$stockCode', '$description', '$unitCost', '$unitSell', '$quantity', $tpev, $stockOnHand) ON DUPLICATE KEY UPDATE date='$date', description='$description', cost=cost+$unitCost*$quantity, sellingPrice=sellingPrice+$unitSell*$quantity, quantityPurchased=quantityPurchased+$quantity, tpev=tpev+$tpev, stockOnHand=stockOnHand+$stockOnHand";
+			//updating the stockmaster record which contains all stock purchases
+            $updateStockMaster = "INSERT INTO StockMaster (date, stockCode, description, cost, sellingPrice, quantityPurchased, tpev, stockOnHand) VALUES ('$date', '$stockCode', '$description', '$unitCost', '$unitSell', '$quantity', $tpev, $stockOnHand) ON DUPLICATE KEY UPDATE date='$date', description='$description', cost=cost+'$unitCost'*'$quantity', sellingPrice=sellingPrice+'$unitSell'*'$quantity', quantityPurchased=quantityPurchased+'$quantity', tpev=tpev+'$tpev', stockOnHand=stockOnHand+'$stockOnHand'";
             $res = $conn->query($updateStockMaster);
-            if ($res === TRUE) {
+            
+			//checking the success of executed queries and rendering respective messages
+			if ($res === TRUE) {
                 echo "Updated stock master!";
                 echo "<br>";
             }
@@ -51,18 +57,23 @@
             }
 
             echo "<br>";
-        } elseif (isset($_POST['search'])) {
+        } 
+	 
+	 //displaying the search form if the user has clicked search
+	 elseif (isset($_POST['search'])) {
             ?>
          <form method='POST' action="<?php echo $_SERVER['PHP_SELF'];  ?>">
-             <br />
-             <br />
+             <br/>
+             <br/>
              <div class="row container">
                  <div class="col-lg-4"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
                  <div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
              </div>
          </form>
      <?php
-        } elseif (isset($_POST['find'])) {
+        } 
+	 //implementing search algorithm if the user has clicked find button
+	 elseif (isset($_POST['find'])) {
             $st = $_POST['searchTerm'];
             $searchq = " SELECT DISTINCT * FROM Stock
     WHERE stockCode LIKE '%$st%' 
@@ -73,10 +84,11 @@
     OR quantity LIKE '%$st%'
     OR unitCost LIKE '%$st%'
     OR unitSell LIKE '%$st%'
-	OR description LIKE '%$st%'
-    LIMIT 0 , 30";
+	OR description LIKE '%$st%'";
             $result = $conn->query($searchq);
+            echo "<h3 class='pageCenter'>Stock Details</h3>";
             echo "<form method='post' action='Stock_Input.php'>
+            <br>
                  <table class = 'table table-striped'>
                     <tr>
                      	<th><strong>Stock Code</strong></th>
@@ -105,10 +117,15 @@
             }
             echo " </table>";
             echo "</form>";
-        } elseif (isset($_POST['descending'])) {
+        } 
+	 
+	 //sorting stock records in descending order of date
+	 elseif (isset($_POST['descending'])) {
             $retrieveq = "SELECT * FROM Stock ORDER BY date DESC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action=Stock_Input.php>";
+            echo "<h3 class='pageCenter'>Stock Details</h3>";
+            echo "<br>";
             echo "<table class = 'table table-striped'>
                     <tr align='center'>
                         <th>stockCode</th>
@@ -139,17 +156,20 @@
                     echo "<td>" . $row['description'] . "</td>";
                     echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
                     echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
-
-
-                    echo "</tr>";
+                   echo "</tr>";
                 }
             }
             echo " </table>";
             echo "</form>";
-        } elseif (isset($_POST['descendingQuantity'])) {
+        } 
+	 
+	 //sorting stock records in descending order of quantity
+	 elseif (isset($_POST['descendingQuantity'])) {
             $retrieveq = "SELECT * FROM Stock ORDER BY quantity DESC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action=Stock_Input.php>";
+            echo "<h3 class='pageCenter'>Stock Details</h3>";
+            echo "<br>";
             echo "<table class = 'table table-striped'>
                     <tr align='center'>
                         <th>stockCode</th>
@@ -180,17 +200,20 @@
                     echo "<td>" . $row['description'] . "</td>";
                     echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
                     echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
-
-
                     echo "</tr>";
                 }
             }
             echo " </table>";
             echo "</form>";
-        } elseif (isset($_POST['ascending'])) {
+        } 
+	 
+	 //sorting stock records in ascending order of date
+	 elseif (isset($_POST['ascending'])) {
             $retrieveq = "SELECT * FROM Stock ORDER BY date ASC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action='Stock_Input.php'>";
+            echo "<h3 class='pageCenter'>Stock Details</h3>";
+            echo "<br>";
             echo "<table class = 'table table-striped'>
                     <tr align='center'>
                         <th>stockCode</th>
@@ -221,17 +244,20 @@
                     echo "<td>" . $row['description'] . "</td>";
                     echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
                     echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
-
-
                     echo "</tr>";
                 }
             }
             echo " </table>";
             echo "</form>";
-        } elseif (isset($_POST['ascendingQuantity'])) {
+        } 
+	 
+	 //sorting stock records in ascending order of quantity
+	 elseif (isset($_POST['ascendingQuantity'])) {
             $retrieveq = "SELECT * FROM Stock ORDER BY quantity ASC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action='Stock_Input.php'>";
+            echo "<h3 class='pageCenter'>Stock Details</h3>";
+            echo "<br>";
             echo "<table class = 'table table-striped'>
                     <tr align='center'>
                         <th>stockCode</th>
@@ -262,19 +288,21 @@
                     echo "<td>" . $row['description'] . "</td>";
                     echo "<td><b><a href='Stock_Input.php?stockId={$row['stockCode']}'>Edit</a></b></td>";
                     echo "<td><b><a href='Stock_Input.php?id={$row['stockCode']}'>Delete</a></b></td>";
-
-
                     echo "</tr>";
                 }
             }
             echo " </table>";
             echo "</form>";
-        } elseif (isset($_POST['open'])) {
+        } 
+	 
+	 //opening all records upon clicking of the 'open' button
+	 elseif (isset($_POST['open'])) {
             $retrieveq = "SELECT * FROM Stock";
             $result = $conn->query($retrieveq);
 
             echo "<form method='post' action='Stock_Input.php'>
-			 
+              <h3 class='pageCenter'>Stock Details</h3>
+                <br>
                 <table class = 'table table-striped'>
                     <tr align='center'>
                         <th>stockCode</th>
@@ -312,7 +340,8 @@
             }
             echo " </table>";
             echo "</form>";
-            echo "<h4><strong>TOTALS</strong><h4>";
+            echo "<h4 class='pageCenter'><strong>TOTALS</strong><h4>";
+            echo "<br>";
             echo "<table class = 'table table-striped'>
                     <tr>
                         <th>Quantity</th>
@@ -320,11 +349,12 @@
 						<th>Total Cost Cost</th>
                         <th>Unit Sell</th>
 					 </tr>";
-
+		 	
+		 	//summing up the columns in the tables and converting the returned object into a string that can be displayed in the browser
             $fetchQuantityTotal = "SELECT SUM(quantity) q FROM Stock";
             $executeFetchQuantityTotal = $conn->query($fetchQuantityTotal);
             foreach ($executeFetchQuantityTotal as $rq) {
-                $stringQuantityTotal = $rq['q'];
+				$stringQuantityTotal = $rq['q'];
             }
 
             $fetchUnitCostTotal = "SELECT SUM(unitCost) uct FROM Stock ";
@@ -338,7 +368,8 @@
             foreach ($executeFetchUnitSellTotal  as $unitSellTotalRow) {
                 $stringUnitSellTotal = $unitSellTotalRow['usl'];
             }
-
+		 	
+		 	//defining the total cost
             $totalCost =  $stringQuantityTotal * $stringUnitCostTotal;
             echo "<tr>";
             echo "<td>" .  $stringQuantityTotal . "</td>";
@@ -348,12 +379,17 @@
 
             echo "</tr>";
             echo " </table>";
-        } elseif (isset($_GET['id'])) {
+        } 
+	 
+	 //filtering of records and only displaying the one with a particular id (stock code)
+	 elseif (isset($_GET['id'])) {
             $id = $_REQUEST['id'];
             $retrieveq = "SELECT * FROM Stock WHERE stockCode='$id'";
             $result = $conn->query($retrieveq);
 
             echo "<table class = 'table table-striped'>
+             <h3 class='pageCenter'>Stock Details</h3>
+              <br> 
                     <tr>
                         <th>stockCode</th>
                         <th>Date</th>
@@ -384,7 +420,10 @@
             }
 
             echo " </table>";
-        } elseif (isset($_GET['del'])) {
+        } 
+	 
+	 //implementing the delete functionality
+	 elseif (isset($_GET['del'])) {
             $del = $_GET['del'];
 
             $deleteq = "DELETE FROM Stock WHERE stockCode='$del'";
@@ -393,12 +432,17 @@
                 echo "Entire record successfully deleted!";
             else
                 echo "Ooops!" . $conn->error;
-        } elseif (isset($_GET['stockId'])) {
+        } 
+	 
+	 
+	 //filtering of records and only displaying a selected one
+	 elseif (isset($_GET['stockId'])) {
             $id = $_REQUEST['stockId'];
             $retrieveq = "SELECT * FROM Stock WHERE stockCode='$id'";
             $result = $conn->query($retrieveq);
-
+            echo "<h3 class='pageCenter'>Stock Details</h3>";
             echo "<table class = 'table table-striped'>
+             <br> 
                     <tr>
                         <th>stockCode</th>
                         <th>Date</th>
@@ -429,7 +473,10 @@
             }
 
             echo " </table>";
-        } elseif (isset($_GET['ed'])) {
+        } 
+	 
+	 //displaying a particular record that the user wishes to edit
+	 elseif (isset($_GET['ed'])) {
             $id = $_GET['ed'];
             $retrieveq = "SELECT * FROM Stock WHERE stockCode='$id'";
             $result = $conn->query($retrieveq);
@@ -439,7 +486,7 @@
 
          <form action="Stock_Input.php" method="post">
              <div class="container-fluid bg-info">
-                 <h3 class="pageCenter"> Stock Details</h3>
+                 <h3 class="pageCenter">Stock Details</h3>
                  <br>
                  <div class="row" style="text-align:center">
                      <div class="col-lg-1"> <strong>Stock Code</strong></div>
@@ -480,18 +527,18 @@
                      </div>
                      <div class="col-lg-3"><input type="text" name="description" id="description" class="form-control" required value="<?php echo $row[7]; ?>" />
                      </div>
-
-
                  </div>
                  <br />
+<div class ="row">
+                 <div class=" col-lg-5">
 
-                 <div class="row">
-                     <div class="col-lg-3">
-                         <a href="InvoiceDetail.php"> <button class="btn btn-info btn-sm formcontrol" id="update" name="update">Update</button></a>
-                     </div>
-                     <div class=" col-lg-3">
-                         <button class="btn btn-info btn-sm form-control" id="nextItem" name="nextItem" style="text-align: right;">Next Item</button>
-                     </div>
+                </div>
+                <div class="col-lg-2">
+                    <a href="InvoiceDetail.php"> <button class="btn btn-info btn-sm formcontrol" id="update" name="update">Update </button></a>
+                </div>
+                <div class=" col-lg-5">
+
+                </div>
 
                  </div>
                  <br />
@@ -499,20 +546,13 @@
          </form>
          <br>
          <br>
-         <form action="Stock_Input.php" method="post">
-             <div class="row container">
-                 <div class="col-lg-2"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
-                 <div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
-             </div>
-
-             </div>
-         </form>
-
-
+        
      <?php
 
-        } elseif (isset($_POST['update'])) {
-
+        } 
+	 
+	 //implementing the update functionality
+	 elseif (isset($_POST['update'])) {
 
             $stockCode = $_POST['stockCode'];
             $date = $_POST['date'];
@@ -532,7 +572,11 @@
                 echo "Ooops!" . $conn->error;
                 echo "<br>";
             }
-        } elseif (isset($_POST['invoiceDetail'])) {
+		 
+        } 
+	 
+	 //redirecting to respesctive pages
+	 elseif (isset($_POST['invoiceDetail'])) {
             header("Location: InvoiceDetail.php");
         } elseif (isset($_POST['stockMaster'])) {
             header("Location: StockMaster.php");
@@ -542,6 +586,7 @@
             header("Location: DebtorsMaster.php");
         }
 
+	 	//closing the connection to the database
         $conn->close();
 
         ?>

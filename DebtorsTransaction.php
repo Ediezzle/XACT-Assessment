@@ -6,16 +6,16 @@
 	<meta name="viewport" content="width=device-width, initialscale=1.0">
 	<link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
 	<link href="xact.css" rel="stylesheet" type="text/css" />
-	<title>Debtors Transaction</title>
+	<title>Debtors Transactions</title>
 </head>
 
 <body>
 
-	<br>
-	<h3 class="pageCenter"><strong>Debtors Transactions</strong></h3>
+	<br >
 
 	<form action="Debtors_Transaction_input.php" method="post">
-
+		<h3 class='pageCenter'> <b>Debtors Transactions</b></h3>
+		<br >
 		<div class="col-lg-4"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
 		<div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
 
@@ -29,7 +29,6 @@
 
 		$retrieveQuery = "SELECT * FROM DebtorsTransaction";
 		$res = $conn->query($retrieveQuery);
-
 
 		echo "<table class = 'table table-striped'>
                     <tr>
@@ -54,7 +53,9 @@
 			echo "</tr>";
 		}
 		echo " </table>";
-		echo "<h4><strong>TOTALS</strong><h4>";
+		echo "<br >";
+		echo "<h4 class='pageCenter'><strong>TOTALS</strong><h4>";
+		echo "<br >";
 		echo "<table class = 'table table-striped'>
                     <tr>
 						<th>Vat Value</th>
@@ -64,18 +65,18 @@
 		$fetchVatTotal = "SELECT SUM(vatValue) vv FROM DebtorsTransaction";
 		$executeFetchVatTotal = $conn->query($fetchVatTotal);
 		foreach ($executeFetchVatTotal as $rv) {
-			$stringVatTotal = $rv['vv'];
+			$doubleVatTotal = (double)($rv['vv']);
 		}
 
 		$fetchGrossTransactionTotal = "SELECT SUM(grossTransactionValue) gtv FROM DebtorsTransaction";
 		$executeFetchGrossTransactionTotal = $conn->query($fetchGrossTransactionTotal);
 		foreach ($executeFetchGrossTransactionTotal as $gtt) {
-			$stringGrossTransactionTotal = $gtt['gtv'];
+			$doubleGrossTransactionTotal = (double)$gtt['gtv'];
 		}
 
 		echo "<tr>";
-		echo "<td>" . $stringVatTotal . "</td>";
-		echo "<td >" . $stringGrossTransactionTotal . "</td>";
+		echo "<td>" . $doubleVatTotal . "</td>";
+		echo "<td >" . $doubleGrossTransactionTotal . "</td>";
 		echo "</tr>";
 		echo " </table>";
 
@@ -83,8 +84,8 @@
 		?>
 	</form>
 
-	<br>
-	<br>
+	<br >
+	<br >
 	<form action="Debtors_Transaction_Input.php" method="post">
 		<div class="row">
 			<div class="col-lg-3">

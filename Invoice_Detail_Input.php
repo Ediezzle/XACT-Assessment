@@ -5,7 +5,7 @@
      <meta name="viewport" content="width=device-width, initialscale=1.0">
      <link href="bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
      <link href="xact.css" rel="stylesheet" type="text/css" />
-     <title>Invoice Detail</title>
+     <title>Invoice Details</title>
  </head>
 
  <body>
@@ -32,11 +32,11 @@
 
             //casting some retrieved string values to doubles
             foreach ($res as $rows) {
-                $unitCostDouble = (float) $rows['unitCost'];
-                $unitSellDouble = (float) $rows['unitSell'];
+                $unitCostDouble = (double) $rows['unitCost'];
+                $unitSellDouble = (double) $rows['unitSell'];
             }
 
-            $subTotal = (int) $quantitySold * $unitSellDouble - $discount;
+            $subTotal = (double) ((int) $quantitySold * $unitSellDouble - $discount);
 
             //capturing values into the database
             $insertq = "INSERT INTO InvoiceDetail (date, accCode, name, itemNumber, stockCode, quantitySold, unitCost, unitSell, discount, subtotal, transactionType) VALUES('$date','$accCode', '$name', '$itemNumber', '$stockCode', '$quantitySold', '$unitCostDouble', '$unitSellDouble', '$discount', '$subTotal', '$transactionType')";
@@ -75,12 +75,13 @@
 
             $retrieveLastRecord = "SELECT * FROM InvoiceDetail ORDER BY invoiceNumber DESC LIMIT 1";
             $lastRecord = $conn->query($retrieveLastRecord);
-            $tsev = (int) $quantitySold * $unitSellDouble * 0.85;
+            $tsev = (float) ((int) $quantitySold * $unitSellDouble * 0.85);
 
             //Incrementing quantity sold in the StockMaster table everytime an item is sold
             $updateStockMaster = "UPDATE StockMaster SET quantitySold=StockMaster.quantitySold+$quantitySold, tsev=tsev+$tsev where stockCode='$stockCode'";
             $res = $conn->query($updateStockMaster);
-
+			
+			//displaying different messages in accordance with the results of the executed queries
             if ($insertDebtorsTransactionResult === TRUE) {
                 echo "Transaction recorded in Debtors Transaction File";
                 echo "<br>";
@@ -90,7 +91,7 @@
                 echo "Ooops" . $conn->error;
 
             if ($res === TRUE) {
-                echo "StockMaster successfully updated";
+                echo "Quantity sold successfully updated in StockMaster";
                 echo "<br>";
             } else {
                 echo "Ooops! " . $conn->error;
@@ -114,7 +115,7 @@
                 $balance = $fetchedRow['salesYearToDate'] - $paid;
             }
 
-
+			//updating the debtors master table with credit sale transactions
             if ($tT = 'credit') {
                 $updateDebtorsMaster = "INSERT INTO DebtorsMaster (accCode, name, costYearToDate, salesYearToDate, paid, balance) VALUES ('$ac', '$nm', '$costYearToDate', '$salesYearToDate', '$paid', '$balance') ON DUPLICATE KEY UPDATE name='$nm', costYearToDate=costYearToDate+'$costYearToDate', salesYearToDate=salesYearToDate+'$salesYearToDate', paid='$paid', balance=salesYearToDate-'$paid'";
                 $updateResult = $conn->query($updateDebtorsMaster);
@@ -135,54 +136,55 @@
                 echo "The following record has been added successfully";
                 ?> <form action="Invoice_Detail_Input.php" method="post">
                  <div class="container-fluid bg-info">
-                     <h3 class="pageCenter"> Invoice Detail</h3>
+                     <h3 class="pageCenter"> Invoice Details</h3>
                      <br>
                      <div class="row" style="text-align: center;">
-                         <div class="col-lg-1"> Date</div>
-                         <div class="col-lg-1"> Invoice Number</div>
-                         <div class="col-lg-1"> Transaction Type</div>
-                         <div class="col-lg-1"> Account Code</div>
-                         <div class="col-lg-1"> Name & Surname</div>
-                         <div class="col-lg-1"> Item Number</div>
-                         <div class="col-lg-1"> Stock Code</div>
-                         <div class="col-lg-1"> Quantity Sold</div>
-                         <div class="col-lg-1"> Unit Cost</div>
-                         <div class="col-lg-1"> Unit Sell</div>
-                         <div class="col-lg-1 "> Discount</div>
-                         <div class="col-lg-1 "> Sub Total</div>
-
-
-                     </div>
+                         <div class="col-lg-2"> Date</div>
+                         <div class="col-lg-2"> Invoice Number</div>
+                         <div class="col-lg-2"> Transaction Type</div>
+                         <div class="col-lg-2"> Account Code</div>
+                         <div class="col-lg-2"> Name & Surname</div>
+                         <div class="col-lg-2"> Item Number</div>
+                      </div>
                      <div class="row">
-                         <div class="col-lg-1"><input type="date" name="date" id="date" class="form-control" readonly value="<?php echo $date; ?>" />
+                         <div class="col-lg-2"><input type="date" name="date" id="date" class="form-control" readonly value="<?php echo $date; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" readonly value="<?php echo $invoiceNumber; ?>" />
+                         <div class="col-lg-2"><input type="text" name="invoiceNumber" id="invoiceNumber" class="form-control" readonly value="<?php echo $invoiceNumber; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="transactionType" id="transactionType" class="form-control" readonly value="<?php echo $transType; ?>" />
+                         <div class="col-lg-2"><input type="text" name="transactionType" id="transactionType" class="form-control" readonly value="<?php echo $transactionType; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="accCode" id="accCode" class="form-control" readonly value="<?php echo $row['accCode']; ?>" />
+                         <div class="col-lg-2"><input type="text" name="accCode" id="accCode" class="form-control" readonly value="<?php echo $row['accCode']; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="name" id="name" class="form-control" readonly value="<?php echo $name; ?>" />
+                         <div class="col-lg-2"><input type="text" name="name" id="name" class="form-control" readonly value="<?php echo $name; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="itemNumber" id="itemNumber" class="form-control" readonly value="<?php echo $itemNumber; ?>" />
+                         <div class="col-lg-2"><input type="text" name="itemNumber" id="itemNumber" class="form-control" readonly value="<?php echo $itemNumber; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="stockCode" id="stockCode" class="form-control" readonly value="<?php echo $stockCode; ?>" />
+                      </div>
+					 
+					 <br>
+					 <div class="row">
+					  <div class="col-lg-2"> Stock Code</div>
+                         <div class="col-lg-2"> Quantity Sold</div>
+                         <div class="col-lg-2"> Unit Cost</div>
+                         <div class="col-lg-2"> Unit Sell</div>
+                         <div class="col-lg-2 "> Discount</div>
+                         <div class="col-lg-2 "> Sub Total</div>
+					   </div>
+					 <div class="row">
+					 <div class="col-lg-2"><input type="text" name="stockCode" id="stockCode" class="form-control" readonly value="<?php echo $stockCode; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="quantitySold" id="quantitySold" class="form-control" readonly value="<?php echo $quantitySold; ?>" />
+                         <div class="col-lg-2"><input type="text" name="quantitySold" id="quantitySold" class="form-control" readonly value="<?php echo $quantitySold; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="unitCost" id="unCost" class="form-control" disabled value="<?php echo $unitCostDouble; ?>" />
+                         <div class="col-lg-2"><input type="text" name="unitCost" id="unCost" class="form-control" disabled value="<?php echo $unitCostDouble; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="unitSell" id="unitSell" class="form-control" disabled value="<?php echo $unitSellDouble; ?>" />
+                         <div class="col-lg-2"><input type="text" name="unitSell" id="unitSell" class="form-control" disabled value="<?php echo $unitSellDouble; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="discount" id="discount" class="form-control" readonly value="<?php echo $discount; ?>" />
+                         <div class="col-lg-2"><input type="text" name="discount" id="discount" class="form-control" readonly value="<?php echo $discount; ?>" />
                          </div>
-                         <div class="col-lg-1"><input type="text" name="subTotal" id="subTotal" class="form-control" readonly value="<?php echo $subTotal; ?>" />
+                         <div class="col-lg-2"><input type="text" name="subTotal" id="subTotal" class="form-control" readonly value="<?php echo $subTotal; ?>" />
                          </div>
-
-
-
-                     </div>
-                     <br />
+						 </div>
+                     <br/>
 
                      <div class="row">
                          <div class="col-lg-4">
@@ -228,6 +230,8 @@
          <form method='POST' action="<?php echo $_SERVER['PHP_SELF'];  ?>">
              <br />
              <br />
+             <h3 class="pageCenter"> Invoice Details</h3>
+             <br>
              <div class="row container">
                  <div class="col-lg-4"> <input class="formcontrol" type="text" name="searchTerm" placeholder="Type in what you want to search for and Hit Find"> </div>
                  <div class="col-lg-3"> <button class="btn btn-sm btn-info" type="submit" name="find"> Find</button> </div>
@@ -250,7 +254,8 @@
     OR subTotal LIKE '%$st%'
 	OR transactionType LIKE '%$st%'";
             $result = $conn->query($searchq);
-
+            echo "<h3 class='pageCenter'> Invoice Details</h3>
+                     <br>";
             echo "<table class = 'table table-striped'>
                     <tr>
                         <th>Date</th>
@@ -293,6 +298,8 @@
             $retrieveq = "SELECT * FROM InvoiceDetail";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action=Invoice_Detail_Input.php>";
+            echo "<h3 class='pageCenter'> Invoice Details</h3>
+                     <br>";
             echo "<table class = 'table table-striped'>
                     <tr>
                         <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
@@ -324,13 +331,11 @@
                 echo "<td>" . $row['unitSell'] . "</td>";
                 echo "<td>" . $row['discount'] . "</td>";
                 echo "<td>" . $row['subTotal'] . "</td>";
-
-
                 echo "</tr>";
             }
             echo " </table>";
             echo "</form>";
-            echo "<h4><strong>TOTALS</strong><h4>";
+            echo "<h4 class='pageCenter'><strong>TOTALS</strong><h4>";
             echo "<table class = 'table table-striped'>
                     <tr>
                         <th>Quantity Sold</th>
@@ -384,6 +389,8 @@
             $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY date DESC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action=Invoice_detail_Input.php>";
+            echo "<h3 class='pageCenter'> Invoice Details</h3>
+                     <br>";
             echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
@@ -429,6 +436,8 @@
             $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY date ASC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action='Invoice_Detail_Input.php'>";
+            echo "<h3 class='pageCenter'> Invoice Details</h3>
+                     <br>";
             echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
@@ -442,7 +451,6 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
-						 
  					</tr>";
 
             if (is_array($result) || is_object($result)) {
@@ -468,11 +476,14 @@
             echo " </table>";
             echo "</form>";
         }
+	 
         //sorting by sub total in descending order
         elseif (isset($_POST['ascendingSubTotal'])) {
             $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY subTotal ASC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action='Invoice_Detail_Input.php'>";
+            echo "<h3 class='pageCenter'> Invoice Details</h3>
+                     <br>";
             echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
@@ -505,18 +516,20 @@
                     echo "<td>" . $row['unitSell'] . "</td>";
                     echo "<td>" . $row['discount'] . "</td>";
                     echo "<td>" . $row['subTotal'] . "</td>";
-
                     echo "</tr>";
                 }
             }
             echo " </table>";
             echo "</form>";
         }
+	 
         //sorting by sub total in descending order
         elseif (isset($_POST['descendingSubTotal'])) {
             $retrieveq = "SELECT * FROM InvoiceDetail ORDER BY subTotal DESC";
             $result = $conn->query($retrieveq);
             echo "<form method='post' action='Invoice_Detail_Input.php'>";
+            echo "<h3 class='pageCenter'> Invoice Details</h3>
+                     <br>";
             echo "<table class = 'table table-striped'>
                     <th><button name='ascending' id='ascending'><img src='ascending.PNG' width='10' height='15' alt='ascending'/></button>Date<button name='descending' id='descending'><img src='descending.PNG' width='10' height='15' alt='descending'/></button></th>
                         <th>Invoice Number</th>
@@ -530,7 +543,6 @@
                         <th>Unit Sell</th>
                         <th>Discount</th>
                         <th><button name='ascendingSubTotal' id='ascendingSubTotal'><img src='ascending.PNG' width='10' height='15' alt='ascendingSubTotal'/></button>Sub Total<button name='descendingSubTotal' id='descendingSubTotal'><img src='descending.PNG' width='10' height='15' alt='descendingSubTotal'/></button></th>
-						
  					</tr>";
 
             if (is_array($result) || is_object($result)) {
@@ -559,7 +571,6 @@
 
         //terminating connection to the database	 
         $conn->close();
-
         ?>
 
      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
